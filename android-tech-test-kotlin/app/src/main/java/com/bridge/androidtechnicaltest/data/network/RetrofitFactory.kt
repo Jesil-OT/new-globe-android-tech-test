@@ -1,4 +1,4 @@
-package com.bridge.androidtechnicaltest.core.di
+package com.bridge.androidtechnicaltest.data.network
 
 import com.bridge.androidtechnicaltest.core.Constants
 import okhttp3.Interceptor
@@ -9,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitFactory {
-    fun provideLoggingInterceptor(): HttpLoggingInterceptor{
+    fun provideLoggingInterceptor(): HttpLoggingInterceptor {
         return HttpLoggingInterceptor().also {
             it.level = HttpLoggingInterceptor.Level.BODY
         }

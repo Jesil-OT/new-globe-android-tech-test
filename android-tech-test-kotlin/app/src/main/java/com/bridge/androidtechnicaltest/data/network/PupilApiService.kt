@@ -1,40 +1,31 @@
 package com.bridge.androidtechnicaltest.data.network
 
-import com.bridge.androidtechnicaltest.data.network.model.PupilsDto
+import com.bridge.androidtechnicaltest.core.DataError
+import com.bridge.androidtechnicaltest.core.Result
+import com.bridge.androidtechnicaltest.core.safeApiCall
 import com.bridge.androidtechnicaltest.data.network.model.PupilsResponseDto
 import kotlinx.serialization.InternalSerializationApi
-import retrofit2.http.Body
-import retrofit2.http.DELETE
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.PUT
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.Response
 
+// To provide this in koin
 interface PupilApiService {
     //get all pupils from remote
     @OptIn(InternalSerializationApi::class)
-    @GET("pupils")
-    suspend fun getPupils(@Query("page") page: Int = 1): PupilsResponseDto
-
+    suspend fun getAllPupils(): Result<PupilsResponseDto, DataError.NetworkError>
     //create a new pupil
-    @OptIn(InternalSerializationApi::class)
-    @POST("pupils")
-    suspend fun createPupil(@Body pupil: PupilsDto): PupilsDto
 
     //update an existing pupil
-    @OptIn(InternalSerializationApi::class)
-    @PUT("pupils/{pupilId}")
-    suspend fun editPupil(@Path("pupilId") pupilId: Int, @Body pupil: PupilsDto): PupilsDto
 
     //delete an existing pupil
-    @OptIn(InternalSerializationApi::class)
-    @DELETE("pupils/{pupilId}")
-    suspend fun deletePupil(@Path("pupilId") pupilId: Int): PupilsDto
 
     //get a single pupil
+}
+
+class PupilApiServiceImpl(private val networkCall: PupilNetworkCall) : PupilApiService {
+
     @OptIn(InternalSerializationApi::class)
-    @GET("pupils/{pupilId}")
-    suspend fun getPupil(@Path("pupilId") pupilId: Int): PupilsDto
+    override suspend fun getAllPupils(): Result<PupilsResponseDto, DataError.NetworkError> {
+         return safeApiCall{ networkCall.getPupils() }
+    }
 
 }

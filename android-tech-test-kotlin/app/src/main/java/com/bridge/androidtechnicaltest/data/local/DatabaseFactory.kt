@@ -1,9 +1,8 @@
-package com.bridge.androidtechnicaltest.core.di
+package com.bridge.androidtechnicaltest.data.local
 
 import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.bridge.androidtechnicaltest.data.local.AppDatabase
 
 object DatabaseFactory {
     fun provideDatabaseInstance(context: Context) : RoomDatabase {

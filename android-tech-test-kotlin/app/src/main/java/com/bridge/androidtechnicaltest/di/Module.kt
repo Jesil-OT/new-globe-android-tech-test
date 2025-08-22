@@ -1,8 +1,10 @@
-package com.bridge.androidtechnicaltest.core.di
+package com.bridge.androidtechnicaltest.di
 
 import com.bridge.androidtechnicaltest.data.db.IPupilRepository
 import com.bridge.androidtechnicaltest.data.db.PupilRepository
+import com.bridge.androidtechnicaltest.data.local.DatabaseFactory
 import com.bridge.androidtechnicaltest.data.network.PupilServiceFactory
+import com.bridge.androidtechnicaltest.data.network.RetrofitFactory
 
 import org.koin.dsl.module
 
