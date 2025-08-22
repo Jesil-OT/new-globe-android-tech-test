@@ -1,6 +1,6 @@
-package com.bridge.androidtechnicaltest.db
+package com.bridge.androidtechnicaltest.data.db
 
-import com.bridge.androidtechnicaltest.network.PupilApi
+import com.bridge.androidtechnicaltest.data.local.AppDatabase
 import io.reactivex.Single
 
 interface IPupilRepository {

@@ -1,15 +1,16 @@
-package com.bridge.androidtechnicaltest.db;
+package com.bridge.androidtechnicaltest.data.db;
 
 import androidx.room.Dao;
 import androidx.room.Query;
 
 import java.util.List;
 
-import io.reactivex.Single;
+import kotlinx.coroutines.flow.Flow;
+
 
 @Dao
 public interface PupilDao {
 
     @Query("SELECT * FROM Pupils ORDER BY name ASC")
-    Single<List<Pupil>> getPupils();
+    Flow<List<Pupil>> getPupils();
 }

@@ -1,4 +1,4 @@
-package com.bridge.androidtechnicaltest.db
+package com.bridge.androidtechnicaltest.data.db
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
