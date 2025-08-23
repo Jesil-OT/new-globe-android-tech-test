@@ -4,7 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bridge.androidtechnicaltest.data.model.Pupil
 import com.bridge.androidtechnicaltest.data.repository.PupilsRepository
+import com.bridge.androidtechnicaltest.feature.pupil.models.PupilUI
 import com.bridge.androidtechnicaltest.ui.PupilUiState
 import kotlinx.coroutines.launch
 
@@ -19,11 +21,21 @@ class PupilViewModel(
         getAllPupils()
     }
 
-    private fun getAllPupils() {
+    fun getAllPupils() {
         viewModelScope.launch {
             repository.fetchPupils().collect { uiState ->
                 _pupilUIState.value = uiState
             }
         }
     }
+}
+
+fun Pupil.toPupilUI(): PupilUI{
+    return PupilUI(
+        pupilId = id.toString(),
+        pupilName = "$firstName $lastName",
+        pupilLocation = "$longitude, $latitude",
+        pupilImage = image
+
+    )
 }

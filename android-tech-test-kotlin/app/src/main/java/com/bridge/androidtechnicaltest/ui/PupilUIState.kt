@@ -10,3 +10,9 @@ sealed class PupilUiState {
     data class Error(val message: String) : PupilUiState()
     object Loading : PupilUiState()
 }
+
+sealed class AddPupilUiState {
+    object Success : AddPupilUiState()
+    data class Error(val message: String) : AddPupilUiState()
+    object Loading : AddPupilUiState()
+}

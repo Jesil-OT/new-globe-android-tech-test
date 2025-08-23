@@ -2,7 +2,9 @@ package com.bridge.androidtechnicaltest.ui
 
 import com.bridge.androidtechnicaltest.core.NetworkError
 import com.bridge.androidtechnicaltest.core.Result
+import kotlinx.serialization.InternalSerializationApi
 
+@OptIn(InternalSerializationApi::class)
 fun NetworkError.asUiText(): String{
     return when(this){
         is NetworkError.NoInternetConnection -> "No Internet Connection"
@@ -12,7 +14,7 @@ fun NetworkError.asUiText(): String{
         is NetworkError.EmptyResponse -> "Empty Response"
         is NetworkError.UnknownError -> "Unknown Error"
         is NetworkError.ServerError -> "Server Error"
-        is NetworkError.ApiError -> "Api Error"
+        is NetworkError.ApiError -> { this.errorResponse?.errorTitle ?: "Api Error" }
     }
 }
 

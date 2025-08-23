@@ -29,7 +29,7 @@ fun PupilsEntity.fromPupilEntity(): Pupil {
 }
 
 @OptIn(InternalSerializationApi::class)
-fun Pupil.toPupilDto(): PupilsDto {
+fun Pupil.toPupil(): PupilsDto {
     return PupilsDto(
         pupilId = id,
         pupilName = "$firstName $lastName",
@@ -41,7 +41,7 @@ fun Pupil.toPupilDto(): PupilsDto {
 }
 
 @OptIn(InternalSerializationApi::class)
-fun PupilsDto.toPupil(): Pupil {
+fun PupilsDto.toPupilDto(): Pupil {
     return Pupil(
         id = pupilId,
         firstName = pupilName.split(" ")[0],

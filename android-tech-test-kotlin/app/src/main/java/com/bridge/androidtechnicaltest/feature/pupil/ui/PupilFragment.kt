@@ -5,31 +5,59 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import com.bridge.androidtechnicaltest.R
 import com.bridge.androidtechnicaltest.databinding.FragmentPupillistBinding
+import com.bridge.androidtechnicaltest.feature.pupil.components.PupilRecyclerAdapter
+import com.bridge.androidtechnicaltest.feature.pupil.models.PupilUI
 import com.bridge.androidtechnicaltest.ui.PupilUiState
+import com.google.android.material.snackbar.Snackbar
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class PupilFragment: Fragment(R.layout.fragment_pupillist) {
-    private var _binding: FragmentPupillistBinding? =  null
+class PupilFragment : Fragment(R.layout.fragment_pupillist) {
+    private var _binding: FragmentPupillistBinding? = null
     private val binding get() = _binding!!
     private val viewModel: PupilViewModel by viewModel()
+
+    private val pupilAdapter by lazy { PupilRecyclerAdapter() }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentPupillistBinding.bind(view)
-        binding.apply {
-
-        }
+        setUpViews()
         setUpObservers()
+    }
+
+    private fun setUpViews() = with(binding) {
+        pupilList.adapter = pupilAdapter
     }
 
     private fun setUpObservers() {
         viewModel.pupilUIState.observe(viewLifecycleOwner) { uiState ->
             when (uiState) {
-                is PupilUiState.Error -> {}
-                is PupilUiState.Loading -> {}
-                is PupilUiState.Success -> {}
+                is PupilUiState.Error -> errorViewState(uiState.message)
+                is PupilUiState.Loading -> loadingViewState()
+                is PupilUiState.Success -> successViewState(uiState.pupils.map { it.toPupilUI() })
             }
         }
+    }
+
+    private fun successViewState(
+        pupilLists: List<PupilUI>
+    ) = with(binding) {
+        loadingView.root.visibility = View.GONE
+        pupilList.visibility = View.VISIBLE
+        pupilAdapter.submitList(pupilLists)
+    }
+
+    private fun errorViewState(errorMessage: String) = with(binding) {
+        loadingView.root.visibility = View.GONE
+        pupilList.visibility = View.VISIBLE
+        Snackbar.make(root, errorMessage, Snackbar.LENGTH_LONG).setAction("Retry") {
+            viewModel.getAllPupils()
+        }.show()
+    }
+
+    private fun loadingViewState() = with(binding) {
+        loadingView.root.visibility = View.VISIBLE
+        pupilList.visibility = View.GONE
     }
 
     override fun onDestroyView() {

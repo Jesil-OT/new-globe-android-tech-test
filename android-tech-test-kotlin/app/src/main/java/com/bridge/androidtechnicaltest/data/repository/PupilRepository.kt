@@ -1,7 +1,5 @@
 package com.bridge.androidtechnicaltest.data.repository
 
-import com.bridge.androidtechnicaltest.core.DataError
-import com.bridge.androidtechnicaltest.core.NetworkError
 import com.bridge.androidtechnicaltest.data.local.PupilsDao
 import com.bridge.androidtechnicaltest.data.model.Pupil
 import com.bridge.androidtechnicaltest.data.network.PupilApiService
@@ -9,15 +7,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.InternalSerializationApi
 import com.bridge.androidtechnicaltest.core.Result
 import com.bridge.androidtechnicaltest.data.mapper.fromPupilEntity
-import com.bridge.androidtechnicaltest.data.mapper.toPupil
+import com.bridge.androidtechnicaltest.data.mapper.toPupilDto
 import com.bridge.androidtechnicaltest.data.mapper.toPupilEntity
 import com.bridge.androidtechnicaltest.ui.PupilUiState
-import com.bridge.androidtechnicaltest.ui.asErrorUiText
 import com.bridge.androidtechnicaltest.ui.asUiText
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.firstOrNull
@@ -44,7 +38,7 @@ class PupilsRepositoryImpl(
                 is Result.Success -> {
                     // save to database
                     val remotePupils = pupils.data.pupils
-                    savePupilsToLocal(*remotePupils.map { it.toPupil() }.toTypedArray())
+                    savePupilsToLocal(*remotePupils.map { it.toPupilDto() }.toTypedArray())
 
                     emitAll(
                         localDataSource.getAllPupils()
