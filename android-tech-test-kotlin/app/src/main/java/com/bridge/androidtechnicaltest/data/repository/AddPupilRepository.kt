@@ -3,11 +3,11 @@ package com.bridge.androidtechnicaltest.data.repository
 import com.bridge.androidtechnicaltest.data.mapper.toPupil
 import com.bridge.androidtechnicaltest.data.model.Pupil
 import com.bridge.androidtechnicaltest.data.network.PupilApiService
-import com.bridge.androidtechnicaltest.ui.AddPupilUiState
+import com.bridge.androidtechnicaltest.feature.pupil.models.AddPupilUiState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import com.bridge.androidtechnicaltest.core.Result
-import com.bridge.androidtechnicaltest.ui.asUiText
+import com.bridge.androidtechnicaltest.core.utils.asUiText
 import kotlinx.serialization.InternalSerializationApi
 
 class AddPupilRepositoryImpl(private val remoteDataSource: PupilApiService): AddPupilRepository {

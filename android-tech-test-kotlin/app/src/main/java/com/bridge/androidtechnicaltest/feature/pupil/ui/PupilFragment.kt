@@ -7,8 +7,9 @@ import com.bridge.androidtechnicaltest.R
 import com.bridge.androidtechnicaltest.databinding.FragmentPupillistBinding
 import com.bridge.androidtechnicaltest.feature.pupil.components.PupilRecyclerAdapter
 import com.bridge.androidtechnicaltest.feature.pupil.models.PupilUI
-import com.bridge.androidtechnicaltest.ui.PupilUiState
+import com.bridge.androidtechnicaltest.feature.pupil.models.PupilUiState
 import com.google.android.material.snackbar.Snackbar
+import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PupilFragment : Fragment(R.layout.fragment_pupillist) {
@@ -34,7 +35,12 @@ class PupilFragment : Fragment(R.layout.fragment_pupillist) {
             when (uiState) {
                 is PupilUiState.Error -> errorViewState(uiState.message)
                 is PupilUiState.Loading -> loadingViewState()
-                is PupilUiState.Success -> successViewState(uiState.pupils.map { it.toPupilUI() })
+                is PupilUiState.Success -> {
+                    successViewState(uiState.pupils.map { it.toPupilUI() })
+                    if (uiState.isStale){
+                        Snackbar.make(binding.root, "Your pupil list is up to date", Snackbar.LENGTH_LONG).show()
+                    }
+                }
             }
         }
     }

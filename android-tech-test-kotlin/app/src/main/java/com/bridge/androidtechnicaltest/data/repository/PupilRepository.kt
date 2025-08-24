@@ -9,8 +9,8 @@ import com.bridge.androidtechnicaltest.core.Result
 import com.bridge.androidtechnicaltest.data.mapper.fromPupilEntity
 import com.bridge.androidtechnicaltest.data.mapper.toPupilDto
 import com.bridge.androidtechnicaltest.data.mapper.toPupilEntity
-import com.bridge.androidtechnicaltest.ui.PupilUiState
-import com.bridge.androidtechnicaltest.ui.asUiText
+import com.bridge.androidtechnicaltest.feature.pupil.models.PupilUiState
+import com.bridge.androidtechnicaltest.core.utils.asUiText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
@@ -24,48 +24,51 @@ class PupilsRepositoryImpl(
     private val localDataSource: PupilsDao,
     private val remoteDataSource: PupilApiService
 ) : PupilsRepository {
-    @OptIn(InternalSerializationApi::class)
+
     override fun fetchPupils(): Flow<PupilUiState> {
         return flow {
             emit(PupilUiState.Loading)
-            // Get data from cache first for better UX
-            val cachePupils = localDataSource.getAllPupils().firstOrNull()
-            cachePupils?.let {
-                emit(PupilUiState.Success(pupils = cachePupils.map { it.fromPupilEntity() }, isStale = true))
-            }
-            // Then data fetch from network
+            // fetch data from network
             when (val pupils = remoteDataSource.getAllPupils()) {
                 is Result.Success -> {
                     // save to database
                     val remotePupils = pupils.data.pupils
-                    savePupilsToLocal(*remotePupils.map { it.toPupilDto() }.toTypedArray())
+                    localDataSource.deletePupils()
+                    remotePupils.forEach {
+                        savePupilsToLocal(it.toPupilDto())
+                    }
 
                     emitAll(
                         localDataSource.getAllPupils()
                             .map { localPupil ->
-                                PupilUiState.Success(pupils = localPupil.map { it.fromPupilEntity() }, isStale = false)
+                                PupilUiState.Success(
+                                    pupils = localPupil.map { it.fromPupilEntity() },
+                                    isStale = true
+                                )
                             }.distinctUntilChanged()
                     )
                 }
 
                 is Result.Error -> {
-                    if (cachePupils == null) {
-                        val error = pupils.error.asUiText()
-                        emit(PupilUiState.Error(message = error))
-                    } else {
-                        emit(PupilUiState.Success(pupils = cachePupils.map { it.fromPupilEntity() }, isStale = true))
-                    }
+                    val error = pupils.error.asUiText()
+                    emit(PupilUiState.Error(message = error))
+                    emitAll(
+                        localDataSource.getAllPupils()
+                            .map { localPupil ->
+                                PupilUiState.Success(
+                                    pupils = localPupil.map { it.fromPupilEntity() },
+                                    isStale = false
+                                )
+                            }.distinctUntilChanged()
+                    )
                 }
             }
         }.flowOn(Dispatchers.IO)
     }
 
-    private suspend fun savePupilsToLocal(vararg pupils: Pupil) {
+    private suspend fun savePupilsToLocal(pupils: Pupil) {
         withContext(Dispatchers.IO) {
-            localDataSource.deletePupils()
-            pupils.forEach { pupil ->
-                localDataSource.insertPupils(pupil.toPupilEntity())
-            }
+            localDataSource.insertPupils(pupils.toPupilEntity())
         }
     }
 

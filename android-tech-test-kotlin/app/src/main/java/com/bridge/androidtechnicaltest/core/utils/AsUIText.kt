@@ -1,4 +1,4 @@
-package com.bridge.androidtechnicaltest.ui
+package com.bridge.androidtechnicaltest.core.utils
 
 import com.bridge.androidtechnicaltest.core.NetworkError
 import com.bridge.androidtechnicaltest.core.Result
@@ -14,6 +14,7 @@ fun NetworkError.asUiText(): String{
         is NetworkError.EmptyResponse -> "Empty Response"
         is NetworkError.UnknownError -> "Unknown Error"
         is NetworkError.ServerError -> "Server Error"
+        is NetworkError.NotFound -> "Not Found"
         is NetworkError.ApiError -> { this.errorResponse?.errorTitle ?: "Api Error" }
     }
 }

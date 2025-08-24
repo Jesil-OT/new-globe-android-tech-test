@@ -1,4 +1,4 @@
-package com.bridge.androidtechnicaltest.ui
+package com.bridge.androidtechnicaltest.feature.pupil.models
 
 import com.bridge.androidtechnicaltest.data.model.Pupil
 

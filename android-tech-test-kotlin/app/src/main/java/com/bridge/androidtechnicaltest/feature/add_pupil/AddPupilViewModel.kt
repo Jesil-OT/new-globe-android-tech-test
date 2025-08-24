@@ -1,12 +1,10 @@
 package com.bridge.androidtechnicaltest.feature.add_pupil
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bridge.androidtechnicaltest.data.model.Pupil
 import com.bridge.androidtechnicaltest.data.repository.AddPupilRepository
-import com.bridge.androidtechnicaltest.ui.AddPupilUiState
+import com.bridge.androidtechnicaltest.feature.pupil.models.AddPupilUiState
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow

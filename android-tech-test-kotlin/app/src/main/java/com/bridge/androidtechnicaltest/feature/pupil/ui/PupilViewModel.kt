@@ -7,12 +7,14 @@ import androidx.lifecycle.viewModelScope
 import com.bridge.androidtechnicaltest.data.model.Pupil
 import com.bridge.androidtechnicaltest.data.repository.PupilsRepository
 import com.bridge.androidtechnicaltest.feature.pupil.models.PupilUI
-import com.bridge.androidtechnicaltest.ui.PupilUiState
+import com.bridge.androidtechnicaltest.feature.pupil.models.PupilUiState
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class PupilViewModel(
     private val repository: PupilsRepository
-): ViewModel() {
+) : ViewModel() {
 
     private val _pupilUIState = MutableLiveData<PupilUiState>()
     val pupilUIState: LiveData<PupilUiState> = _pupilUIState
@@ -23,17 +25,18 @@ class PupilViewModel(
 
     fun getAllPupils() {
         viewModelScope.launch {
-            repository.fetchPupils().collect { uiState ->
+            repository.fetchPupils().collectLatest { uiState ->
                 _pupilUIState.value = uiState
             }
         }
     }
+
 }
 
-fun Pupil.toPupilUI(): PupilUI{
+fun Pupil.toPupilUI(): PupilUI {
     return PupilUI(
         pupilId = id.toString(),
-        pupilName = "$firstName $lastName",
+        pupilName = "$firstName  $lastName",
         pupilLocation = "$longitude, $latitude",
         pupilImage = image
 

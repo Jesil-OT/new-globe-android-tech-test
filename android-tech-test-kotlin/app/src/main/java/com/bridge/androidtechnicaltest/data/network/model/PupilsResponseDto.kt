@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
-@InternalSerializationApi @Serializable
+@Serializable
 data class PupilsResponseDto(
     @SerializedName("items") val pupils: List<PupilsDto>,
     @SerializedName("pageNumber") val pageNumber: Int,

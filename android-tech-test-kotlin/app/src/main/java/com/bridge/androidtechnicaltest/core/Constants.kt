@@ -2,5 +2,5 @@ package com.bridge.androidtechnicaltest.core
 
 object Constants {
     const val BASE_URL = "https://androidtechnicaltestapi-test.bridgeinternationalacademies.com/"
-    const val API_REQUEST_TIMEOUT: Long = 5000L
+    const val API_REQUEST_TIMEOUT = 5L
 }

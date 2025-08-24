@@ -28,6 +28,7 @@ suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): Result<T, Netwo
             when (e.code()) {
                     400 -> Result.Error(error = NetworkError.BadRequest)
                     401 -> Result.Error(error = NetworkError.Unauthorized)
+                    404 -> Result.Error(error = NetworkError.NotFound)
                     413 -> Result.Error(error = NetworkError.PayloadTooLarge)
                     500 -> Result.Error(error = NetworkError.ServerError)
                     else -> Result.Error(error = NetworkError.UnknownError)
@@ -79,34 +80,13 @@ private fun defaultErrorResponse(): ErrorResponse = ErrorResponse(
 sealed interface Error
 typealias RootError = Error
 
-sealed interface DataError: Error {
-    sealed class NetworkError : DataError {
-        object NO_INTERNET_CONNECTION : NetworkError()
-        object BAD_REQUEST : NetworkError()
-        object UNAUTHORIZED : NetworkError()
-        object PAYLOAD_TOO_LARGE : NetworkError()
-        object EMPTY_RESPONSE : NetworkError()
-        object UNKNOWN_ERROR : NetworkError()
-        object SERVER_ERROR : NetworkError()
-        data class ApiError @OptIn(InternalSerializationApi::class) constructor(val errorResponse: ErrorResponse?) : NetworkError()
-    }
-}
-
-@OptIn(InternalSerializationApi::class)
 sealed class NetworkError(errorResponse: ErrorResponse?): Error {
-//    enum class Network: NetworkError {
-//        NO_INTERNET_CONNECTION,
-//        BAD_REQUEST,
-//        UNAUTHORIZED,
-//        PAYLOAD_TOO_LARGE,
-//        EMPTY_RESPONSE,
-//    }
-    @OptIn(InternalSerializationApi::class)
     data class ApiError (val errorResponse: ErrorResponse?): NetworkError(errorResponse)
     object UnknownError: NetworkError(null)
     object ServerError: NetworkError(null)
     object EmptyResponse: NetworkError(null)
     object PayloadTooLarge: NetworkError(null)
+    object NotFound: NetworkError(null)
     object Unauthorized: NetworkError(null)
     object BadRequest: NetworkError(null)
     object NoInternetConnection: NetworkError(null)
