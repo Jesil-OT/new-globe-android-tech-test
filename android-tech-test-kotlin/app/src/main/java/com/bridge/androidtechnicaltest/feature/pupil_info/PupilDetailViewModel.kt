@@ -15,10 +15,21 @@ class PupilDetailViewModel(
     private val _pupilDetailUiState = MutableLiveData<DetailPupilUiState>()
     val pupilDetailUiState: LiveData<DetailPupilUiState> = _pupilDetailUiState
 
+    private val _pupilDetailDeleteState = MutableLiveData<DetailPupilUiState>()
+    val pupilDetailDeleteState: LiveData<DetailPupilUiState> = _pupilDetailDeleteState
+
     fun getPupil(pupilId: Int){
         viewModelScope.launch {
             repository.getPupil(pupilId).collectLatest { details ->
                 _pupilDetailUiState.value = details
+            }
+        }
+    }
+
+    fun deletePupil(pupilId: Int){
+        viewModelScope.launch {
+            repository.deletePupil(pupilId).collectLatest { details ->
+                _pupilDetailDeleteState.value = details
             }
         }
     }

@@ -12,7 +12,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 
-class PupilRecyclerAdapter: ListAdapter<PupilUI, PupilViewHolder>(PupilDiffCallback()){
+class PupilRecyclerAdapter(
+    private val pupilAction: PupilAction
+) : ListAdapter<PupilUI, PupilViewHolder>(PupilDiffCallback()) {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -27,17 +29,27 @@ class PupilRecyclerAdapter: ListAdapter<PupilUI, PupilViewHolder>(PupilDiffCallb
 
     override fun onBindViewHolder(holder: PupilViewHolder, position: Int) {
         val currentItem = getItem(position)
-        if (currentItem != null){
+        if (currentItem != null) {
             holder.bind(getItem(position))
         }
     }
 
-    class PupilViewHolder(
+    inner class PupilViewHolder(
         private val binding: PupilItemBinding
-    ): RecyclerView.ViewHolder(binding.root){
-        fun bind(pupil: PupilUI){
+    ) : RecyclerView.ViewHolder(binding.root) {
+        init {
+            binding.root.setOnClickListener {
+                val position = bindingAdapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val pupil = getItem(position)
+                    pupilAction.navigateToPupilDetail(pupil.pupilId.toInt())
+                }
+            }
+        }
+
+        fun bind(pupil: PupilUI) {
             binding.pupilName.text = pupil.pupilName
-            binding.pupilLocation.text = pupil.pupilLocation
+            binding.pupilLocation.text = pupil.pupilCountry
 
             val requestOptions = RequestOptions()
 //                .placeholder(R.drawable.empty_plate)
@@ -52,17 +64,21 @@ class PupilRecyclerAdapter: ListAdapter<PupilUI, PupilViewHolder>(PupilDiffCallb
     }
 
 
-    private class PupilDiffCallback : DiffUtil.ItemCallback<PupilUI>(){
-       override fun areItemsTheSame(
-           oldItem: PupilUI,
-           newItem: PupilUI
-       ): Boolean =
-           oldItem == newItem
+    private class PupilDiffCallback : DiffUtil.ItemCallback<PupilUI>() {
+        override fun areItemsTheSame(
+            oldItem: PupilUI,
+            newItem: PupilUI
+        ): Boolean =
+            oldItem == newItem
 
-       override fun areContentsTheSame(
-           oldItem: PupilUI,
-           newItem: PupilUI
-       ): Boolean =
-           oldItem.pupilId == newItem.pupilId
-   }
+        override fun areContentsTheSame(
+            oldItem: PupilUI,
+            newItem: PupilUI
+        ): Boolean =
+            oldItem.pupilId == newItem.pupilId
+    }
+}
+
+interface PupilAction {
+    fun navigateToPupilDetail(pupilId: Int)
 }

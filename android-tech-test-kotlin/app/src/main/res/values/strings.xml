@@ -12,4 +12,8 @@
     <string name="pupil_image">Pupil Image</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
+    <string name="name">Name</string>
+    <string name="pupil_id">Pupil ID</string>
+    <string name="country">Country</string>
+    <string name="open_camera">Open camera</string>
 </resources>

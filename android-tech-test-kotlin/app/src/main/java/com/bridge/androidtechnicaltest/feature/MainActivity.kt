@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        return super.onSupportNavigateUp()
+       return findNavController(R.id.nav_host).navigateUp()
     }
 
 //    override fun onCreateOptionsMenu(menu: Menu): Boolean {

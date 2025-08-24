@@ -17,7 +17,7 @@ interface PupilApiService {
     //update an existing pupil
 
     //delete an existing pupil
-
+    suspend fun deletePupil(pupilId: Int): Result<PupilsDto, NetworkError>
     //get a single pupil
     suspend fun getPupil(pupilId: Int): Result<PupilsDto, NetworkError>
 }
@@ -30,6 +30,10 @@ class PupilApiServiceImpl(private val networkCall: PupilNetworkCall) : PupilApiS
 
     override suspend fun createPupil(pupil: PupilsDto): Result<PupilsDto, NetworkError> {
         return safeApiCall { networkCall.createPupil(pupil) }
+    }
+
+    override suspend fun deletePupil(pupilId: Int): Result<PupilsDto, NetworkError> {
+        return safeApiCall { networkCall.deletePupil(pupilId) }
     }
 
     override suspend fun getPupil(pupilId: Int): Result<PupilsDto, NetworkError> {

@@ -17,6 +17,7 @@ import com.bridge.androidtechnicaltest.data.repository.PupilsRepository
 import com.bridge.androidtechnicaltest.data.repository.PupilsRepositoryImpl
 import com.bridge.androidtechnicaltest.feature.add_pupil.AddPupilViewModel
 import com.bridge.androidtechnicaltest.feature.pupil.ui.PupilViewModel
+import com.bridge.androidtechnicaltest.feature.pupil_info.PupilDetailViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.module.dsl.viewModel
@@ -57,5 +58,6 @@ val addPupilModule = module {
 }
 val detailPupilModule = module {
     single<PupilDetailRepository> { PupilDetailRepositoryImpl(localDataSource = get<PupilsDao>(), remoteDataSource = get<PupilApiService>()) }
+    viewModelOf(::PupilDetailViewModel) bind PupilDetailViewModel::class
 }
 

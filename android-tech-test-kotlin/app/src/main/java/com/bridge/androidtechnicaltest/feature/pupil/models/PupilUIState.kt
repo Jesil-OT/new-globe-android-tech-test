@@ -7,7 +7,9 @@ sealed class PupilUiState {
         val pupils: List<Pupil>,
         val isStale: Boolean
     ) : PupilUiState()
+
     data class Error(val message: String) : PupilUiState()
+
     object Loading : PupilUiState()
 }
 

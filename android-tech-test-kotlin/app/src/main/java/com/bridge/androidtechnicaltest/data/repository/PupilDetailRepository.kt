@@ -36,7 +36,7 @@ class PupilDetailRepositoryImpl(
                 val pupil = localPupil.map {
                     DetailPupilUiState.Success(
                         pupils = it.fromPupilEntity(),
-                        isStale = false
+                        isStale = true
                     )
                 }.distinctUntilChanged()
                 emitAll(pupil)
@@ -56,6 +56,28 @@ class PupilDetailRepositoryImpl(
         }
     }
 
+    override fun deletePupil(pupilId: Int): Flow<DetailPupilUiState> = flow {
+        emit(DetailPupilUiState.Loading)
+
+        //delete from network first
+        when(val pupil = remoteDataSource.deletePupil(pupilId)){
+            is Result.Success -> {
+                //delete from database
+                localDataSource.deletePupil(pupilId)
+                emit(
+                    DetailPupilUiState.Success(
+                        pupils = null,
+                        isStale = null
+                    )
+                )
+            }
+            is Result.Error -> {
+                val error = pupil.error.asUiText()
+                emit(DetailPupilUiState.Error(message = error))
+            }
+        }
+    }
+
     private suspend fun savePupilsToLocal(pupils: Pupil){
         withContext(Dispatchers.IO){
             localDataSource.insertPupils(pupils.toPupilEntity())
@@ -70,5 +92,7 @@ interface PupilDetailRepository{
      * when no network or no internet or server error
      * show the on from local*/
     fun getPupil(pupilId: Int): Flow<DetailPupilUiState>
+
+    fun deletePupil(pupilId: Int): Flow<DetailPupilUiState>
 }
 

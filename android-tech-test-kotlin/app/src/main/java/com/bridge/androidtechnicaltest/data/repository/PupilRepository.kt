@@ -12,9 +12,13 @@ import com.bridge.androidtechnicaltest.data.mapper.toPupilEntity
 import com.bridge.androidtechnicaltest.feature.pupil.models.PupilUiState
 import com.bridge.androidtechnicaltest.core.utils.asUiText
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -51,15 +55,14 @@ class PupilsRepositoryImpl(
                 is Result.Error -> {
                     val error = pupils.error.asUiText()
                     emit(PupilUiState.Error(message = error))
-                    emitAll(
-                        localDataSource.getAllPupils()
-                            .map { localPupil ->
-                                PupilUiState.Success(
-                                    pupils = localPupil.map { it.fromPupilEntity() },
-                                    isStale = false
-                                )
-                            }.distinctUntilChanged()
-                    )
+                    val pupils = localDataSource.getAllPupils()
+                        .map { localPupil ->
+                            PupilUiState.Success(
+                                pupils = localPupil.map { it.fromPupilEntity() },
+                                isStale = false
+                            )
+                        }.distinctUntilChanged()
+                    emitAll(pupils)
                 }
             }
         }.flowOn(Dispatchers.IO)
@@ -79,4 +82,5 @@ interface PupilsRepository {
      * when no network or no internet or server error
      * show the on from local*/
     fun fetchPupils(): Flow<PupilUiState>
+
 }
