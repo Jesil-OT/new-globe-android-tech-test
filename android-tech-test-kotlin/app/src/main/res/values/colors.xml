@@ -8,4 +8,5 @@
 	<color name = "subTextColor">#4F7096</color>
 	<color name="shimmerColor">#E2E2E2</color>
 	<color name= "white">#FFFFFF</color>"
+	<color name= "danger_red">#AF281F</color>"
 </resources>

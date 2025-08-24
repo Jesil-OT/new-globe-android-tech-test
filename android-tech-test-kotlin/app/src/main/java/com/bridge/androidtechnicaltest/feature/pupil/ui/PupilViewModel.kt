@@ -38,6 +38,7 @@ fun Pupil.toPupilUI(): PupilUI {
         pupilId = id.toString(),
         pupilName = "$firstName  $lastName",
         pupilLocation = "$longitude, $latitude",
+        pupilCountry = country,
         pupilImage = image
 
     )

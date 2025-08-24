@@ -11,6 +11,8 @@ import com.bridge.androidtechnicaltest.data.network.PupilServiceFactory
 import com.bridge.androidtechnicaltest.data.network.RetrofitFactory
 import com.bridge.androidtechnicaltest.data.repository.AddPupilRepository
 import com.bridge.androidtechnicaltest.data.repository.AddPupilRepositoryImpl
+import com.bridge.androidtechnicaltest.data.repository.PupilDetailRepository
+import com.bridge.androidtechnicaltest.data.repository.PupilDetailRepositoryImpl
 import com.bridge.androidtechnicaltest.data.repository.PupilsRepository
 import com.bridge.androidtechnicaltest.data.repository.PupilsRepositoryImpl
 import com.bridge.androidtechnicaltest.feature.add_pupil.AddPupilViewModel
@@ -36,27 +38,24 @@ val networkModule = module {
 }
 
 val databaseModule = module {
-//    single  { DatabaseFactory.provideDatabaseInstance(context =  androidContext()) }
     single<AppDatabase> {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, "TechnicalTestDb")
             .fallbackToDestructiveMigration()
             .build()
     }
+    single<PupilsDao> { DatabaseFactory.providePupilDao(database = get<AppDatabase>()) }
 }
 
 val pupilModule = module {
-    single<PupilsDao> { DatabaseFactory.providePupilDao(database = get<AppDatabase>()) }
     single<PupilsRepository>{ PupilsRepositoryImpl(localDataSource = get<PupilsDao>(), remoteDataSource = get<PupilApiService>()) }
+    viewModelOf(::PupilViewModel) bind PupilViewModel::class
 }
 
 val addPupilModule = module {
     single<AddPupilRepository> { AddPupilRepositoryImpl(remoteDataSource = get<PupilApiService>()) }
-}
-
-val viewModelModule = module {
-//    viewModelOf(PupilViewModel(repository = get<PupilsRepository>())
-    viewModelOf(::PupilViewModel) bind PupilViewModel::class
-//    viewModel { AddPupilViewModel(addPupilRepository = get<AddPupilRepository>()) }
     viewModelOf(::AddPupilViewModel) bind AddPupilViewModel::class
+}
+val detailPupilModule = module {
+    single<PupilDetailRepository> { PupilDetailRepositoryImpl(localDataSource = get<PupilsDao>(), remoteDataSource = get<PupilApiService>()) }
 }
 

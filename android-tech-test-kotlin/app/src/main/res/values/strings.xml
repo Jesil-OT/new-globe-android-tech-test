@@ -9,4 +9,7 @@
     <string name="data_reset">Api Data Reset</string>
     <string name="data_reset_failed">Data Reset Failed</string>
     <string name="create_pupil">Create pupil</string>
+    <string name="pupil_image">Pupil Image</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
 </resources>

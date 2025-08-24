@@ -32,4 +32,8 @@ interface PupilsDao {
     @Query("SELECT * FROM Pupils_table")
     fun getAllPupils(): Flow<List<PupilsEntity>>
 
+    //get a single item
+    @Query("SELECT * FROM Pupils_table WHERE pupil_id = :pupilId")
+    suspend fun getPupil(pupilId: Int): Flow<PupilsEntity>
+
 }

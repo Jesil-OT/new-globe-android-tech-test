@@ -37,16 +37,15 @@ class PupilsRepositoryImpl(
                     remotePupils.forEach {
                         savePupilsToLocal(it.toPupilDto())
                     }
+                    val pupils = localDataSource.getAllPupils()
+                        .map { localPupil ->
+                            PupilUiState.Success(
+                                pupils = localPupil.map { it.fromPupilEntity() },
+                                isStale = true
+                            )
+                        }.distinctUntilChanged()
 
-                    emitAll(
-                        localDataSource.getAllPupils()
-                            .map { localPupil ->
-                                PupilUiState.Success(
-                                    pupils = localPupil.map { it.fromPupilEntity() },
-                                    isStale = true
-                                )
-                            }.distinctUntilChanged()
-                    )
+                    emitAll(pupils)
                 }
 
                 is Result.Error -> {
@@ -77,6 +76,7 @@ class PupilsRepositoryImpl(
 interface PupilsRepository {
     /** get all pupils from remote and
      * save in local to display
-     * when no network or no internet or server error*/
+     * when no network or no internet or server error
+     * show the on from local*/
     fun fetchPupils(): Flow<PupilUiState>
 }
