@@ -14,7 +14,7 @@ interface PupilsDao {
 
     // insert data
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertPupils(pupils: PupilsEntity)
+    suspend fun insertPupils(pupils: List<PupilsEntity>)
 
     // delete a single item if it doesn't exist in remote
     @Query("DELETE FROM Pupils_table WHERE pupil_id = :pupilId")

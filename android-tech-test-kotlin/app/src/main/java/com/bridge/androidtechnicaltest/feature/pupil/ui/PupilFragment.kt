@@ -19,6 +19,7 @@ import com.bridge.androidtechnicaltest.feature.pupil.components.PupilRecyclerAda
 import com.bridge.androidtechnicaltest.feature.pupil.models.PupilUI
 import com.bridge.androidtechnicaltest.feature.pupil.models.PupilResponse
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -54,7 +55,7 @@ class PupilFragment : Fragment(R.layout.fragment_pupillist), PupilAction {
                     return when (menuItem.itemId) {
                         R.id.action_sync -> {
                             // Handle click
-                            viewModel.getAllPupils()
+                            viewModel.observerPupilChanges()
                             true
                         }
 
@@ -70,21 +71,25 @@ class PupilFragment : Fragment(R.layout.fragment_pupillist), PupilAction {
     private fun setUpObservers() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.pupilResponse.collect { uiState ->
-                    when (uiState) {
-                        is PupilResponse.Error -> {
-                            errorViewState(uiState.message)
-                        }
+                launch {
+                    viewModel.response.collect { update ->
+                        when (update) {
+                            is PupilUIResponse.ErrorWhileGettingSynced -> {
+                                errorViewState(update.errorMessage)
+                            }
 
-                        is PupilResponse.Loading -> loadingViewState()
-                        is PupilResponse.Success -> {
-                            successViewState(uiState.pupils.map { it.toPupilUI() })
-                            if (uiState.isStale) {
-                                Snackbar.make(
-                                    binding.root,
-                                    "Your pupil list has been successfully updated. You're now seeing the latest information.",
-                                    Snackbar.LENGTH_LONG
-                                ).show()
+                            is PupilUIResponse.Loading -> {
+                                loadingViewState(
+                                    shouldShowShimmer = update.pupilList.isEmpty()
+                                )
+                            }
+
+                            is PupilUIResponse.ReturnedWithSyncedList -> {
+                                successViewState(update.syncedList)
+                            }
+
+                            is PupilUIResponse.ReturnedFromSingleSource -> {
+                                pupilAdapter.submitList(update.pupilList)
                             }
                         }
                     }
@@ -96,22 +101,34 @@ class PupilFragment : Fragment(R.layout.fragment_pupillist), PupilAction {
     private fun successViewState(
         pupilLists: List<PupilUI>
     ) = with(binding) {
-        loadingView.root.visibility = View.GONE
-        pupilList.visibility = View.VISIBLE
         pupilAdapter.submitList(pupilLists)
+        shimmerLoadingView.root.visibility = View.GONE
+        loadingView.visibility = View.GONE
+        progress.visibility = View.GONE
+        Snackbar.make(
+            root,
+            "Your pupil list has been successfully updated. You're now seeing the latest information.",
+            Snackbar.LENGTH_LONG
+        ).show()
     }
 
     private fun errorViewState(errorMessage: String) = with(binding) {
-        loadingView.root.visibility = View.GONE
+        shimmerLoadingView.root.visibility = View.GONE
+        loadingView.visibility = View.GONE
+        progress.visibility = View.GONE
         pupilList.visibility = View.VISIBLE
         Snackbar.make(root, errorMessage, Snackbar.LENGTH_LONG).setAction("Retry") {
-            viewModel.getAllPupils()
+            viewModel.observerPupilChanges()
         }.show()
     }
 
-    private fun loadingViewState() = with(binding) {
-        loadingView.root.visibility = View.VISIBLE
-        pupilList.visibility = View.GONE
+    private fun loadingViewState(shouldShowShimmer: Boolean) = with(binding) {
+        if (shouldShowShimmer) {
+            shimmerLoadingView.root.visibility = View.VISIBLE
+        } else {
+            loadingView.visibility = View.VISIBLE
+            progress.visibility = View.VISIBLE
+        }
     }
 
     override fun onDestroyView() {
@@ -122,16 +139,6 @@ class PupilFragment : Fragment(R.layout.fragment_pupillist), PupilAction {
     override fun navigateToPupilDetail(pupilId: Int) {
         val action = PupilFragmentDirections.actionPupilFragmentToPupilDetailFragment(pupilId)
         findNavController().navigate(action)
-    }
-
-
-    override fun onContextItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_sync -> {
-                viewModel.getAllPupils()
-            }
-        }
-        return super.onContextItemSelected(item)
     }
 
 }

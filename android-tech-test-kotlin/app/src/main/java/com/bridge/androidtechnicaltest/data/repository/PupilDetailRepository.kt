@@ -81,7 +81,7 @@ class PupilDetailRepositoryImpl(
 
     private suspend fun savePupilsToLocal(pupils: Pupil){
         withContext(Dispatchers.IO){
-            localDataSource.insertPupils(pupils.toPupilToEntity())
+//            localDataSource.insertPupils(pupils.toPupilToEntity())
         }
     }
 }

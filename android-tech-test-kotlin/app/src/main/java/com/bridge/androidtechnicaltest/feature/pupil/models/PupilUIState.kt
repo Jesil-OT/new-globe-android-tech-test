@@ -3,14 +3,10 @@ package com.bridge.androidtechnicaltest.feature.pupil.models
 import com.bridge.androidtechnicaltest.data.model.Pupil
 
 sealed class PupilResponse {
-    data class Success(
-        val pupils: List<Pupil>,
-        val isStale: Boolean
-    ) : PupilResponse()
-
+    data class Success(val pupils: List<Pupil>) : PupilResponse()
+    data class SuccessFromSingleSource(val pupils: List<Pupil>): PupilResponse()
     data class Error(val message: String) : PupilResponse()
-
-    object Loading : PupilResponse()
+    data class Loading(val pupil: List<Pupil>?) : PupilResponse()
 }
 
 sealed class AddPupilResponse {

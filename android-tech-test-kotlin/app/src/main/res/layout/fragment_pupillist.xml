@@ -18,7 +18,7 @@
         tools:listitem="@layout/pupil_item" />
 
     <include
-        android:id="@+id/loading_view"
+        android:id="@+id/shimmer_loading_view"
         layout="@layout/pupil_shimmer"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -27,6 +27,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/create_new_pupil_fab"
@@ -41,5 +42,31 @@
         app:iconTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <View
+        android:id="@+id/loading_view"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/loading_bg"
+        android:elevation="10dp"
+        android:visibility="gone"
+        tools:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progress"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:elevation="10dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/loading_view"
+        app:layout_constraintEnd_toEndOf="@+id/loading_view"
+        app:layout_constraintStart_toStartOf="@+id/loading_view"
+        app:layout_constraintTop_toTopOf="@+id/loading_view"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
