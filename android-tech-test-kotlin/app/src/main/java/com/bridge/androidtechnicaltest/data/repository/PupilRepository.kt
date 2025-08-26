@@ -45,7 +45,6 @@ class PupilsRepositoryImpl(
             cachedPupils?.let {
                 emit(PupilResponse.SuccessFromSingleSource(it))
             }
-            delay(BREAK)
             emit(PupilResponse.Loading(pupil = cachedPupils))
             // fetch data from network
             when (val pupils = remoteDataSource.getAllPupils()) {

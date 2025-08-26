@@ -21,4 +21,7 @@
     <string name="last_name">Last name</string>
     <string name="new_pupil_created">You created %1$s as a new pupil, nice 👍!</string>
     <string name="pupil_updated">Your pupil has been updated successfully, nice 👍</string>
+    <string name="pupil_list_updated">Your pupil list has been successfully updated. You\'re now seeing the latest information.</string>
+    <string name="retry">Retry</string>
+    <string name="no_pupil_list_found">No pupils, unable to fetch data from sever</string>
 </resources>

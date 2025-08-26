@@ -5,6 +5,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
@@ -17,9 +18,7 @@ import com.bridge.androidtechnicaltest.databinding.FragmentPupillistBinding
 import com.bridge.androidtechnicaltest.feature.pupil.components.PupilAction
 import com.bridge.androidtechnicaltest.feature.pupil.components.PupilRecyclerAdapter
 import com.bridge.androidtechnicaltest.feature.pupil.models.PupilUI
-import com.bridge.androidtechnicaltest.feature.pupil.models.PupilResponse
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -50,11 +49,9 @@ class PupilFragment : Fragment(R.layout.fragment_pupillist), PupilAction {
                 override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                     menuInflater.inflate(R.menu.main_menu, menu)
                 }
-
                 override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                     return when (menuItem.itemId) {
                         R.id.action_sync -> {
-                            // Handle click
                             viewModel.observerPupilChanges()
                             true
                         }
@@ -72,24 +69,25 @@ class PupilFragment : Fragment(R.layout.fragment_pupillist), PupilAction {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    viewModel.response.collect { update ->
-                        when (update) {
-                            is PupilUIResponse.ErrorWhileGettingSynced -> {
-                                errorViewState(update.errorMessage)
+                    viewModel.pupilData.collect { update ->
+                        pupilAdapter.submitList(update)
+                        if (update.isEmpty()){
+                            Toast.makeText(requireContext(),
+                                getString(R.string.no_pupil_list_found), Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+                launch {
+                    viewModel.handleEventState.collect { viewEvent ->
+                        when (viewEvent) {
+                            is PupilOneTimeEvent.ErrorEvent -> {
+                                handleErrorEvent(event = viewEvent)
                             }
-
-                            is PupilUIResponse.Loading -> {
-                                loadingViewState(
-                                    shouldShowShimmer = update.pupilList.isEmpty()
-                                )
+                            is PupilOneTimeEvent.LoadingEvent -> {
+                                handleLoadingEvent(event = viewEvent)
                             }
-
-                            is PupilUIResponse.ReturnedWithSyncedList -> {
-                                successViewState(update.syncedList)
-                            }
-
-                            is PupilUIResponse.ReturnedFromSingleSource -> {
-                                pupilAdapter.submitList(update.pupilList)
+                            is PupilOneTimeEvent.SuccessEvent -> {
+                                handleSuccessEvent(event = viewEvent)
                             }
                         }
                     }
@@ -98,37 +96,43 @@ class PupilFragment : Fragment(R.layout.fragment_pupillist), PupilAction {
         }
     }
 
-    private fun successViewState(
-        pupilLists: List<PupilUI>
-    ) = with(binding) {
-        pupilAdapter.submitList(pupilLists)
-        shimmerLoadingView.root.visibility = View.GONE
-        loadingView.visibility = View.GONE
-        progress.visibility = View.GONE
-        Snackbar.make(
-            root,
-            "Your pupil list has been successfully updated. You're now seeing the latest information.",
-            Snackbar.LENGTH_LONG
-        ).show()
+    private fun handleErrorEvent(event: PupilOneTimeEvent.ErrorEvent) {
+        hideLoading()
+        Snackbar.make(binding.root, event.errorMessage, Snackbar.LENGTH_LONG)
+            .setAction(getString(R.string.retry)) { viewModel.observerPupilChanges() }
+            .show()
     }
 
-    private fun errorViewState(errorMessage: String) = with(binding) {
-        shimmerLoadingView.root.visibility = View.GONE
-        loadingView.visibility = View.GONE
-        progress.visibility = View.GONE
-        pupilList.visibility = View.VISIBLE
-        Snackbar.make(root, errorMessage, Snackbar.LENGTH_LONG).setAction("Retry") {
-            viewModel.observerPupilChanges()
-        }.show()
-    }
-
-    private fun loadingViewState(shouldShowShimmer: Boolean) = with(binding) {
-        if (shouldShowShimmer) {
+    private fun handleLoadingEvent(event: PupilOneTimeEvent.LoadingEvent) = with(binding) {
+        if (event.pupilList.isEmpty()) {
             shimmerLoadingView.root.visibility = View.VISIBLE
         } else {
             loadingView.visibility = View.VISIBLE
             progress.visibility = View.VISIBLE
         }
+    }
+
+    private fun handleSuccessEvent(event: PupilOneTimeEvent.SuccessEvent) {
+        hideLoading()
+        when (event.successSource) {
+            SuccessSource.SYNCED -> {
+                Snackbar.make(
+                    binding.root,
+                    getString(R.string.pupil_list_updated),
+                    Snackbar.LENGTH_SHORT
+                ).show()
+            }
+            SuccessSource.SINGLE_SOURCE -> {
+                // No need to show message for cached data
+                // it's where our data comes from
+            }
+        }
+    }
+
+    private fun hideLoading() = with(binding){
+        shimmerLoadingView.root.visibility = View.GONE
+        loadingView.visibility = View.GONE
+        progress.visibility = View.GONE
     }
 
     override fun onDestroyView() {
