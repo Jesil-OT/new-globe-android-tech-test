@@ -4,6 +4,7 @@ import android.app.Application
 import com.bridge.androidtechnicaltest.di.addPupilModule
 import com.bridge.androidtechnicaltest.di.databaseModule
 import com.bridge.androidtechnicaltest.di.detailPupilModule
+import com.bridge.androidtechnicaltest.di.editPupilModule
 import com.bridge.androidtechnicaltest.di.networkModule
 import com.bridge.androidtechnicaltest.di.pupilModule
 import org.koin.android.ext.koin.androidContext
@@ -21,7 +22,8 @@ class App : Application() {
                 databaseModule,
                 pupilModule,
                 addPupilModule,
-                detailPupilModule
+                detailPupilModule,
+                editPupilModule
             )
         }
     }

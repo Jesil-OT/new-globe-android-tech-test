@@ -20,24 +20,11 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.nav_host) as NavHostFragment
         val navController = navHostFragment.navController
 
-        val appBarConfiguration = AppBarConfiguration(setOf(R.id.pupilFragment,
-            R.id.addPupilFragment))
+        val appBarConfiguration = AppBarConfiguration(setOf(R.id.pupilFragment))
         setupActionBarWithNavController(navController, appBarConfiguration)
     }
 
     override fun onSupportNavigateUp(): Boolean {
        return findNavController(R.id.nav_host).navigateUp()
     }
-
-//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-//        menuInflater.inflate(R.menu.main_menu, menu)
-//        return true
-//    }
-
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        if (item.itemId == R.id.action_reset) {
-//            TODO("Implement actions")
-//        }
-//        return super.onOptionsItemSelected(item)
-//    }
 }

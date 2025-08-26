@@ -13,3 +13,12 @@ data class PupilsDto(
     @SerializedName("latitude") val latitude: Double,
     @SerializedName("longitude") val longitude: Double
 )
+
+@Serializable
+data class AddPupilsDto(
+    @SerializedName("name") val pupilName: String,
+    @SerializedName("country") val pupilCountry: String,
+    @SerializedName("image") val pupilImage: String,
+    @SerializedName("latitude") val latitude: Double,
+    @SerializedName("longitude") val longitude: Double
+)

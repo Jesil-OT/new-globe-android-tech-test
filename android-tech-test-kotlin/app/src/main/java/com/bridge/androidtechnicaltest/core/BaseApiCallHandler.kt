@@ -5,7 +5,6 @@ import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.InternalSerializationApi
-import kotlinx.serialization.json.JsonObject
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.HttpException
@@ -19,7 +18,7 @@ suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): Result<T, Netwo
     return withContext(Dispatchers.IO) {
         try {
             val response: Response<T> = apiCall()
-//            if (response.isSuccessful) {
+            if (response.isSuccessful) {
                 response.body()?.let { data ->
                     Result.Success(data = data)
                 } ?: run {
@@ -28,15 +27,15 @@ suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): Result<T, Netwo
 //                    Result.Error(error = NetworkError.ApiError(errorResponse))
                     Result.Error(error = NetworkError.BadRequest)
                 }
-//            }
-//            else {
-//                val errorResponse: ErrorResponse = convertErrorBody(response.errorBody())
+            }
+            else {
+                val errorResponse: ErrorResponse = convertErrorBody(response.errorBody())
 //                val errorResponse: ErrorResponse? = response.errorBody()?.parseErrorResponse()
-//                Result.Error(error = NetworkError.ApiError(response.parseErrorResponse()))
-                // error coming from server
-//                Result.Error(error = NetworkError.BadRequest)
+                Result.Error(error = NetworkError.ApiError(response.parseErrorResponse()))
+//                 error coming from server
+                Result.Error(error = NetworkError.BadRequest)
 
-//            }
+            }
         }
         catch (e: HttpException) {
 //            e.printStackTrace()

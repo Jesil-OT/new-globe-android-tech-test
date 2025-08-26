@@ -10,7 +10,7 @@
         android:label="Pupils"
         tools:layout="@layout/fragment_pupillist">
         <action
-            android:id="@+id/action_pupilFragment_to_addPupilFragment"
+            android:id="@+id/to_addPupilFragment"
             app:destination="@id/addPupilFragment"
             app:enterAnim="@android:anim/fade_in"
             app:exitAnim="@android:anim/fade_out"
@@ -28,8 +28,8 @@
     <fragment
         android:id="@+id/addPupilFragment"
         android:name="com.bridge.androidtechnicaltest.feature.add_pupil.AddPupilFragment"
-        android:label="fragment_addpupil"
-        tools:layout="@layout/fragment_addpupil"/>
+        android:label="@string/create_pupil"
+        tools:layout="@layout/fragment_addpupil" />
     <fragment
         android:id="@+id/pupilDetailFragment"
         android:name="com.bridge.androidtechnicaltest.feature.pupil_info.PupilDetailFragment"
@@ -41,14 +41,18 @@
         <action
             android:id="@+id/action_to_pupilEditFragment"
             app:destination="@id/pupilEditFragment"
-            app:enterAnim="@android:anim/fade_in"
-            app:exitAnim="@android:anim/fade_out"
-            app:popEnterAnim="@android:anim/fade_in"
-            app:popExitAnim="@android:anim/fade_out" />
+            app:enterAnim="@anim/nav_default_pop_enter_anim"
+            app:exitAnim="@anim/nav_default_pop_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <fragment
         android:id="@+id/pupilEditFragment"
         android:name="com.bridge.androidtechnicaltest.feature.edit_pupil.PupilEditFragment"
         android:label="Edit"
-        tools:layout="@layout/fragment_editpupil" />
+        tools:layout="@layout/fragment_editpupil" >
+        <argument
+            android:name="pupilId"
+            app:argType="integer" />
+    </fragment>
 </navigation>

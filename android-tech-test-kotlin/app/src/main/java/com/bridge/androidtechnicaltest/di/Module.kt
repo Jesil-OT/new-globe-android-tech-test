@@ -11,11 +11,14 @@ import com.bridge.androidtechnicaltest.data.network.PupilServiceFactory
 import com.bridge.androidtechnicaltest.data.network.RetrofitFactory
 import com.bridge.androidtechnicaltest.data.repository.AddPupilRepository
 import com.bridge.androidtechnicaltest.data.repository.AddPupilRepositoryImpl
+import com.bridge.androidtechnicaltest.data.repository.EditPupilRepository
+import com.bridge.androidtechnicaltest.data.repository.EditPupilRepositoryImpl
 import com.bridge.androidtechnicaltest.data.repository.PupilDetailRepository
 import com.bridge.androidtechnicaltest.data.repository.PupilDetailRepositoryImpl
 import com.bridge.androidtechnicaltest.data.repository.PupilsRepository
 import com.bridge.androidtechnicaltest.data.repository.PupilsRepositoryImpl
 import com.bridge.androidtechnicaltest.feature.add_pupil.AddPupilViewModel
+import com.bridge.androidtechnicaltest.feature.edit_pupil.PupilEditViewModel
 import com.bridge.androidtechnicaltest.feature.pupil.ui.PupilViewModel
 import com.bridge.androidtechnicaltest.feature.pupil_info.PupilDetailViewModel
 import org.koin.android.ext.koin.androidContext
@@ -53,7 +56,7 @@ val pupilModule = module {
 }
 
 val addPupilModule = module {
-    single<AddPupilRepository> { AddPupilRepositoryImpl(remoteDataSource = get<PupilApiService>()) }
+    single<AddPupilRepository> { AddPupilRepositoryImpl(remoteDataSource = get<PupilApiService>(), localDataSource = get<PupilsDao>()) }
     viewModelOf(::AddPupilViewModel) bind AddPupilViewModel::class
 }
 val detailPupilModule = module {
@@ -61,3 +64,7 @@ val detailPupilModule = module {
     viewModelOf(::PupilDetailViewModel) bind PupilDetailViewModel::class
 }
 
+val editPupilModule = module {
+    single<EditPupilRepository> { EditPupilRepositoryImpl(remoteDataSource = get<PupilApiService>(), localDataSource = get<PupilsDao>()) }
+    viewModelOf(::PupilEditViewModel) bind PupilEditViewModel::class
+}

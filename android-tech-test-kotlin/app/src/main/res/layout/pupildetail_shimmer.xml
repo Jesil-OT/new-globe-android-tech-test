@@ -12,14 +12,14 @@
             android:id="@+id/pupil_image_shimmer"
             android:layout_width="128dp"
             android:layout_height="128dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="32dp"
             android:background="@color/shimmerColor"
             android:contentDescription="@string/pupil_image"
             app:civ_border_color="@color/subTextColor"
             app:civ_border_width="2dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/edit_pupil" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/pupil_name"
@@ -65,17 +65,19 @@
             app:layout_constraintTop_toBottomOf="@+id/pupil_id" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/edit_pupil"
-            android:layout_width="wrap_content"
+            android:id="@+id/delete_pupil"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
+            android:backgroundTint="@color/shimmerColor"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:text="@string/edit"
-            android:visibility="invisible"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/pupil_image_shimmer"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pupil_country"
+            app:layout_constraintVertical_bias="1.0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

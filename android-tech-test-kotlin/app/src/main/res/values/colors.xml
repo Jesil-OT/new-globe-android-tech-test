@@ -7,6 +7,8 @@
 	<color name = "titleTextColor">#0D141C</color>
 	<color name = "subTextColor">#4F7096</color>
 	<color name="shimmerColor">#E2E2E2</color>
-	<color name= "white">#FFFFFF</color>"
-	<color name= "danger_red">#AF281F</color>"
+	<color name= "white">#FFFFFF</color>
+	<color name= "danger_red">#AF281F</color>
+    <color name="blue_10">#E8EDF2</color>
+	<color name="transparent_black">#7F000000</color>
 </resources>

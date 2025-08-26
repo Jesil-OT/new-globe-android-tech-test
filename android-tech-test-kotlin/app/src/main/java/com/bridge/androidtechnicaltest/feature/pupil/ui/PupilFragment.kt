@@ -1,7 +1,6 @@
 package com.bridge.androidtechnicaltest.feature.pupil.ui
 
 import android.os.Bundle
-import android.view.ContextMenu
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -18,7 +17,7 @@ import com.bridge.androidtechnicaltest.databinding.FragmentPupillistBinding
 import com.bridge.androidtechnicaltest.feature.pupil.components.PupilAction
 import com.bridge.androidtechnicaltest.feature.pupil.components.PupilRecyclerAdapter
 import com.bridge.androidtechnicaltest.feature.pupil.models.PupilUI
-import com.bridge.androidtechnicaltest.feature.pupil.models.PupilUiState
+import com.bridge.androidtechnicaltest.feature.pupil.models.PupilResponse
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -40,6 +39,10 @@ class PupilFragment : Fragment(R.layout.fragment_pupillist), PupilAction {
 
     private fun setUpViews() = with(binding) {
         pupilList.adapter = pupilAdapter
+        createNewPupilFab.setOnClickListener {
+            val actions = PupilFragmentDirections.toAddPupilFragment()
+            findNavController().navigate(actions)
+        }
         val menuHost: MenuHost = requireActivity()
         menuHost.addMenuProvider(
             object : MenuProvider {
@@ -67,14 +70,14 @@ class PupilFragment : Fragment(R.layout.fragment_pupillist), PupilAction {
     private fun setUpObservers() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.pupilUIState.collect { uiState ->
+                viewModel.pupilResponse.collect { uiState ->
                     when (uiState) {
-                        is PupilUiState.Error -> {
+                        is PupilResponse.Error -> {
                             errorViewState(uiState.message)
                         }
 
-                        is PupilUiState.Loading -> loadingViewState()
-                        is PupilUiState.Success -> {
+                        is PupilResponse.Loading -> loadingViewState()
+                        is PupilResponse.Success -> {
                             successViewState(uiState.pupils.map { it.toPupilUI() })
                             if (uiState.isStale) {
                                 Snackbar.make(

@@ -2,9 +2,16 @@ package com.bridge.androidtechnicaltest.feature.pupil_info
 
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bridge.androidtechnicaltest.R
@@ -13,6 +20,8 @@ import com.bridge.androidtechnicaltest.feature.pupil.models.PupilUI
 import com.bridge.androidtechnicaltest.feature.pupil.ui.toPupilUI
 import com.bridge.androidtechnicaltest.feature.pupil_info.models.DetailPupilUiState
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.snackbar.Snackbar
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
@@ -31,28 +40,60 @@ class PupilDetailFragment : Fragment(R.layout.fragment_pupildetail) {
         setUpViews()
     }
 
-    private fun setUpViews() = with(binding){
+    private fun setUpViews() = with(binding) {
         deletePupil.setOnClickListener {
             alertDialog(
-                positiveButtonAction = {viewModel.deletePupil(args.pupilId)},
+                positiveButtonAction = { viewModel.deletePupil(args.pupilId) },
                 negativeButtonAction = {}
             )
         }
-        editPupil.setOnClickListener {
-            findNavController().navigate(PupilDetailFragmentDirections.actionToPupilEditFragment())
-        }
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(
+            object : MenuProvider {
+                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                    menuInflater.inflate(R.menu.details_menu, menu)
+                }
+
+                override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                    return when (menuItem.itemId) {
+                        R.id.edit_pupil -> {
+                            // Handle click
+                            findNavController().navigate(
+                                PupilDetailFragmentDirections.actionToPupilEditFragment(
+                                    args.pupilId
+                                )
+                            )
+                            true
+                        }
+
+                        else -> false
+                    }
+                }
+            },
+            viewLifecycleOwner,
+            Lifecycle.State.RESUMED
+        )
     }
 
     private fun setUpObservers() {
         viewModel.pupilDetailUiState.observe(viewLifecycleOwner) { details ->
             when (details) {
-                is DetailPupilUiState.Error -> errorViewState(details.message){viewModel.getPupil(args.pupilId) }
+                is DetailPupilUiState.Error -> errorViewState(details.message) {
+                    viewModel.getPupil(
+                        args.pupilId
+                    )
+                }
+
                 is DetailPupilUiState.Loading -> loadingViewState()
                 is DetailPupilUiState.Success -> {
                     val pupil = details.pupils?.toPupilUI() ?: return@observe
                     successViewState(pupil)
-                    if (details.isStale ?: return@observe){
-                        Snackbar.make(binding.root, "You're now seeing their latest information.", Snackbar.LENGTH_LONG).show()
+                    if (details.isStale ?: return@observe) {
+                        Snackbar.make(
+                            binding.root,
+                            "You're now seeing their latest information.",
+                            Snackbar.LENGTH_LONG
+                        ).show()
                     }
                 }
             }
@@ -62,7 +103,8 @@ class PupilDetailFragment : Fragment(R.layout.fragment_pupildetail) {
                 is DetailPupilUiState.Error -> errorViewState(details.message)
                 is DetailPupilUiState.Loading -> loadingViewState()
                 is DetailPupilUiState.Success -> {
-                    Snackbar.make(binding.root, "Pupil deleted successfully", Snackbar.LENGTH_LONG).show()
+                    Snackbar.make(binding.root, "Pupil deleted successfully", Snackbar.LENGTH_LONG)
+                        .show()
                     findNavController().popBackStack()
                 }
             }
@@ -75,8 +117,14 @@ class PupilDetailFragment : Fragment(R.layout.fragment_pupildetail) {
         pupilName.text = pupil.pupilName
         pupilCountry.text = pupil.pupilCountry
         pupilId.text = pupil.pupilId
+
+        val requestOptions = RequestOptions()
+            .placeholder(R.drawable.ic_sync)
+            .error(R.drawable.ic_error)
         Glide.with(binding.root)
             .load(pupil.pupilImage)
+            .apply(requestOptions)
+            .transition(DrawableTransitionOptions.withCrossFade())
             .into(pupilImage)
     }
 
@@ -96,7 +144,7 @@ class PupilDetailFragment : Fragment(R.layout.fragment_pupildetail) {
     private fun alertDialog(
         positiveButtonAction: () -> Unit,
         negativeButtonAction: () -> Unit
-    ){
+    ) {
         AlertDialog.Builder(requireContext())
             .setTitle("Delete Pupil?")
             .setMessage("Are you sure you want to delete this pupil?")
@@ -105,6 +153,7 @@ class PupilDetailFragment : Fragment(R.layout.fragment_pupildetail) {
             .create()
             .show()
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bridge.androidtechnicaltest.R
 import com.bridge.androidtechnicaltest.databinding.PupilItemBinding
 import com.bridge.androidtechnicaltest.feature.pupil.components.PupilRecyclerAdapter.PupilViewHolder
 import com.bridge.androidtechnicaltest.feature.pupil.models.PupilUI
@@ -52,8 +53,8 @@ class PupilRecyclerAdapter(
             binding.pupilLocation.text = pupil.pupilCountry
 
             val requestOptions = RequestOptions()
-//                .placeholder(R.drawable.empty_plate)
-//                .error(R.drawable.ic_broken_image)
+                .placeholder(R.drawable.ic_sync)
+                .error(R.drawable.ic_error)
 
             Glide.with(itemView)
                 .load(pupil.pupilImage)
@@ -62,7 +63,6 @@ class PupilRecyclerAdapter(
                 .into(binding.pupilImage)
         }
     }
-
 
     private class PupilDiffCallback : DiffUtil.ItemCallback<PupilUI>() {
         override fun areItemsTheSame(

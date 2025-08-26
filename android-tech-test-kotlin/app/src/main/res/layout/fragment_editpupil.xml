@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/backgroundColor"
     tools:context=".feature.edit_pupil.PupilEditFragment">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/pupil_image"
         android:layout_width="128dp"
         android:layout_height="128dp"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
         android:contentDescription="@string/pupil_image"
         app:civ_border_color="@color/subTextColor"
         app:civ_border_width="2dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@tools:sample/avatars" />
@@ -35,89 +38,124 @@
         app:layout_constraintVertical_bias="1.0"
         app:maxImageSize="20dp" />
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/name_text_view"
-        style="@style/TextMediumBody"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:text="@string/name"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pupil_image" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/name_text_field_layout"
-        style="@style/Widget.Material3.TextInputLayout.FilledBox"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="32dp"
+        android:hint="@string/first_name"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/name_text_view"
-        app:layout_constraintTop_toBottomOf="@+id/name_text_view">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pupil_image">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/name_text_field"
+            android:id="@+id/first_name_text_field"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:imeOptions="actionNext"
+            android:lines="1" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/id_text_view"
-        style="@style/TextMediumBody"
-        android:layout_width="wrap_content"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/last_name_text_field_layout"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
-        android:text="@string/pupil_id"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/name_text_field_layout" />
+        android:hint="@string/last_name"
+        app:layout_constraintEnd_toEndOf="@+id/name_text_field_layout"
+        app:layout_constraintStart_toStartOf="@+id/name_text_field_layout"
+        app:layout_constraintTop_toBottomOf="@+id/name_text_field_layout">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/last_name_text_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionNext" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/id_text_field_layout"
-        style="@style/Widget.Material3.TextInputLayout.FilledBox"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="@+id/name_text_field_layout"
-        app:layout_constraintStart_toStartOf="@+id/id_text_view"
-        app:layout_constraintTop_toBottomOf="@+id/id_text_view">
+        android:layout_marginTop="24dp"
+        android:hint="@string/pupil_id"
+        app:layout_constraintEnd_toEndOf="@+id/last_name_text_field_layout"
+        app:layout_constraintStart_toStartOf="@+id/last_name_text_field_layout"
+        app:layout_constraintTop_toBottomOf="@+id/last_name_text_field_layout">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/id_name_text_field"
+            android:id="@+id/id_text_field"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:imeOptions="actionNext" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/country_text_view"
-        style="@style/TextMediumBody"
-        android:layout_width="wrap_content"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/country_text_field_layout"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
-        android:text="@string/country"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/id_text_field_layout" />
+        android:hint="@string/country"
+        app:layout_constraintEnd_toEndOf="@+id/name_text_field_layout"
+        app:layout_constraintStart_toStartOf="@+id/id_text_field_layout"
+        app:layout_constraintTop_toBottomOf="@+id/id_text_field_layout">
 
-<!--    <com.google.android.material.textfield.TextInputLayout-->
-<!--        android:id="@+id/id_text_field_layout"-->
-<!--        style="@style/Widget.Material3.TextInputLayout.FilledBox"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="8dp"-->
-<!--        app:layout_constraintEnd_toEndOf="@+id/name_text_field_layout"-->
-<!--        app:layout_constraintStart_toStartOf="@+id/id_text_view"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/id_text_view">-->
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/country_text_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/country"
+            android:imeOptions="actionDone"
+            android:inputType="text" />
 
-<!--        <com.google.android.material.textfield.TextInputEditText-->
-<!--            android:id="@+id/id_name_text_field"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content" />-->
-<!--    </com.google.android.material.textfield.TextInputLayout>-->
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/save_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="32dp"
+        android:text="@string/save"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/country_text_field_layout"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/cancel_button"
+        app:layout_constraintTop_toBottomOf="@+id/loading_view"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/cancel_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="@string/cancel"
+        android:textColor="@color/colorPrimary"
+        app:backgroundTint="@color/blue_10"
+        app:layout_constraintBottom_toBottomOf="@+id/save_button"
+        app:layout_constraintEnd_toStartOf="@+id/save_button"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/country_text_field_layout"
+        app:layout_constraintTop_toTopOf="@+id/save_button" />
+
+    <ProgressBar
+        android:id="@+id/loading_view"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:visibility="invisible"
+        android:progressBackgroundTint="@color/colorPrimary"
+        android:progressTint="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="@+id/country_text_field_layout"
+        app:layout_constraintStart_toStartOf="@+id/country_text_field_layout"
+        app:layout_constraintTop_toBottomOf="@+id/country_text_field_layout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

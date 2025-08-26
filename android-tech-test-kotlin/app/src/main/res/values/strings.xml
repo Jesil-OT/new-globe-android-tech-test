@@ -11,9 +11,14 @@
     <string name="create_pupil">Create pupil</string>
     <string name="pupil_image">Pupil Image</string>
     <string name="edit">Edit</string>
-    <string name="delete">Delete</string>
-    <string name="name">Name</string>
+    <string name="delete">Delete this pupil</string>
+    <string name="first_name">First name</string>
     <string name="pupil_id">Pupil ID</string>
     <string name="country">Country</string>
     <string name="open_camera">Open camera</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="last_name">Last name</string>
+    <string name="new_pupil_created">You created %1$s as a new pupil, nice 👍!</string>
+    <string name="pupil_updated">Your pupil has been updated successfully, nice 👍</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.bridge.androidtechnicaltest.data.network
 
+import com.bridge.androidtechnicaltest.data.network.model.AddPupilsDto
 import com.bridge.androidtechnicaltest.data.network.model.PupilsDto
 import com.bridge.androidtechnicaltest.data.network.model.PupilsResponseDto
 import kotlinx.serialization.InternalSerializationApi
@@ -19,7 +20,7 @@ interface PupilNetworkCall {
 
     //create a new pupil
     @POST("pupils")
-    suspend fun createPupil(@Body pupil: PupilsDto): Response<PupilsDto>
+    suspend fun createPupil(@Body pupil: AddPupilsDto): Response<PupilsDto>
 
     //update an existing pupil
     @PUT("pupils/{pupilId}")

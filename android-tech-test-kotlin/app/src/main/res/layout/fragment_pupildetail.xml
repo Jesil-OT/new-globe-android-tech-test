@@ -11,13 +11,13 @@
         android:id="@+id/pupil_image"
         android:layout_width="128dp"
         android:layout_height="128dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:contentDescription="@string/pupil_image"
         app:civ_border_color="@color/subTextColor"
         app:civ_border_width="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_pupil"
+        app:layout_constraintTop_toTopOf="parent"
         tools:src="@tools:sample/avatars" />
 
     <com.google.android.material.textview.MaterialTextView
@@ -67,25 +67,16 @@
         tools:text="United Kingdom, London" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/edit_pupil"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/edit"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/pupil_image"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.google.android.material.button.MaterialButton
         android:id="@+id/delete_pupil"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:backgroundTint="@color/danger_red"
         android:text="@string/delete"
+        app:icon="@drawable/ic_delete"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -101,6 +92,6 @@
         android:id="@+id/success_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:constraint_referenced_ids="pupil_image, pupil_name, pupil_id, pupil_country, delete_pupil, edit_pupil" />
+        app:constraint_referenced_ids="pupil_image, pupil_name, pupil_id, pupil_country, delete_pupil" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

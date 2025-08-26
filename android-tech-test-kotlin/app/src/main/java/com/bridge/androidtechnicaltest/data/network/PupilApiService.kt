@@ -3,6 +3,7 @@ package com.bridge.androidtechnicaltest.data.network
 import com.bridge.androidtechnicaltest.core.NetworkError
 import com.bridge.androidtechnicaltest.core.Result
 import com.bridge.androidtechnicaltest.core.safeApiCall
+import com.bridge.androidtechnicaltest.data.network.model.AddPupilsDto
 import com.bridge.androidtechnicaltest.data.network.model.PupilsDto
 import com.bridge.androidtechnicaltest.data.network.model.PupilsResponseDto
 import kotlinx.serialization.InternalSerializationApi
@@ -13,9 +14,9 @@ interface PupilApiService {
     //get all pupils from remote
     suspend fun getAllPupils(): Result<PupilsResponseDto, NetworkError>
     //create a new pupil
-    suspend fun createPupil(pupil: PupilsDto): Result<PupilsDto, NetworkError>
+    suspend fun createPupil(pupil: AddPupilsDto): Result<PupilsDto, NetworkError>
     //update an existing pupil
-
+    suspend fun editPupil(pupilId: Int, pupil: PupilsDto): Result<PupilsDto, NetworkError>
     //delete an existing pupil
     suspend fun deletePupil(pupilId: Int): Result<PupilsDto, NetworkError>
     //get a single pupil
@@ -28,8 +29,12 @@ class PupilApiServiceImpl(private val networkCall: PupilNetworkCall) : PupilApiS
          return safeApiCall{ networkCall.getPupils() }
     }
 
-    override suspend fun createPupil(pupil: PupilsDto): Result<PupilsDto, NetworkError> {
+    override suspend fun createPupil(pupil: AddPupilsDto): Result<PupilsDto, NetworkError> {
         return safeApiCall { networkCall.createPupil(pupil) }
+    }
+
+    override suspend fun editPupil(pupilId: Int, pupil: PupilsDto): Result<PupilsDto, NetworkError> {
+        return safeApiCall { networkCall.editPupil(pupilId, pupil) }
     }
 
     override suspend fun deletePupil(pupilId: Int): Result<PupilsDto, NetworkError> {
