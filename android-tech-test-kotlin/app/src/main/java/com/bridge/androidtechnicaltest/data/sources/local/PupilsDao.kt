@@ -1,12 +1,11 @@
-package com.bridge.androidtechnicaltest.data.local
+package com.bridge.androidtechnicaltest.data.sources.local
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.bridge.androidtechnicaltest.data.local.model.PupilsEntity
+import com.bridge.androidtechnicaltest.data.sources.local.model.PupilsEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

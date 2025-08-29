@@ -38,7 +38,7 @@ class PupilViewModel(
             when (uiState) {
                 is Resource.Success -> {
                     // loads the initial data from single source
-                    val currentPupilList: List<PupilUI> = uiState.data.map { it.toPupilUI() }
+                    val currentPupilList: List<PupilUI> = uiState.data.toPupilListUI()
                     if (currentPupilList.isEmpty()){
                         emptyListEvent.emit(true)
                     } else {
@@ -73,10 +73,12 @@ sealed interface PupilOneTimeEvent{
 
 fun Pupil.toPupilUI(): PupilUI {
     return PupilUI(
-        pupilId = id.toString(),
+        pupilId = id,
         pupilName = "$firstName $lastName",
         pupilLocation = "$longitude, $latitude",
         pupilCountry = country,
         pupilImage = image
     )
 }
+
+fun List<Pupil>.toPupilListUI(): List<PupilUI> = map(Pupil::toPupilUI)

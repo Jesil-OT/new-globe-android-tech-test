@@ -41,12 +41,16 @@ class PupilDetailFragment : Fragment(R.layout.fragment_pupildetail) {
     private fun setUpViews() = with(binding) {
         deletePupil.setOnClickListener {
             alertDialog(
-                positiveButtonAction = { viewModel.deletePupil(args.pupilId) },
+                positiveButtonAction = {
+                    viewModel.deletePupil(args.pupilId)
+                },
                 negativeButtonAction = {}
             )
         }
         swipeRefresh.setOnRefreshListener {
-            viewModel.observerPupilChanges(pupilId = args.pupilId)
+            viewModel.observerPupilChanges(
+                pupilId = args.pupilId
+            )
         }
         val menuHost: MenuHost = requireActivity()
         menuHost.addMenuProvider(
@@ -65,9 +69,7 @@ class PupilDetailFragment : Fragment(R.layout.fragment_pupildetail) {
                         R.id.edit_pupil -> {
                             // Handle click
                             findNavController().navigate(
-                                PupilDetailFragmentDirections.actionToPupilEditFragment(
-                                    args.pupilId
-                                )
+                                PupilDetailFragmentDirections.actionToPupilEditFragment(args.pupilId)
                             )
                             true
                         }
@@ -82,12 +84,16 @@ class PupilDetailFragment : Fragment(R.layout.fragment_pupildetail) {
     }
 
     private fun setUpObservers() {
-        viewModel.observerPupilChanges(pupilId = args.pupilId)
+        viewModel.observerPupilChanges(
+            pupilId =
+            args.pupilId
+        )
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.pupilDetails.collect { pupil ->
                         updateViews(pupil)
+                        hideLoading()
                     }
                 }
                 // for observing the menu state
@@ -100,7 +106,7 @@ class PupilDetailFragment : Fragment(R.layout.fragment_pupildetail) {
                     viewModel.handleEventState.collect { viewEvent ->
                         when (viewEvent) {
 
-                            is PupilDetailOneTimeEvent.ErrorEvent -> handleErrorEvent()
+                            is PupilDetailOneTimeEvent.ErrorEvent -> handleErrorEvent(viewEvent.errorMessage)
 
                             is PupilDetailOneTimeEvent.LoadingEvent -> handleLoadingEvent()
 
@@ -117,14 +123,18 @@ class PupilDetailFragment : Fragment(R.layout.fragment_pupildetail) {
                             is DeleteOneTimeEvent.LoadingEvent -> handleLoadingEvent()
 
                             is DeleteOneTimeEvent.SuccessEvent -> {
-                                viewModel.observerPupilChanges(args.pupilId)
-                                Toast.makeText(requireContext(),
-                                    getString(R.string.pupil_deleted_successfully), Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    requireContext(),
+                                    getString(R.string.pupil_deleted_successfully),
+                                    Toast.LENGTH_SHORT
+                                ).show()
                                 delay(500) // Short delay for UI to update
                                 findNavController().popBackStack()
                             }
 
-                            is DeleteOneTimeEvent.DeleteErrorEvent -> handleDeleteErrorEvent(deleteEvent.errorMessage)
+                            is DeleteOneTimeEvent.DeleteErrorEvent -> handleDeleteErrorEvent(
+                                deleteEvent.errorMessage
+                            )
 
                             is DeleteOneTimeEvent.NotFoundEvent -> showNotFoundMessage()
                         }
@@ -149,10 +159,22 @@ class PupilDetailFragment : Fragment(R.layout.fragment_pupildetail) {
         ).show()
     }
 
-    private fun handleErrorEvent() {
+    private fun handleErrorEvent(
+        errorMessage: Int
+    ) {
         hideLoading()
-        Toast.makeText(requireContext(), "Offline mode: Showing saved data", Toast.LENGTH_SHORT)
-            .show()
+        Snackbar.make(
+            binding.root,
+            errorMessage,
+            Snackbar.LENGTH_LONG
+        ).show()
+        updateViews(
+            DetailPupilUI(
+                pupilId = "No pupil ID found",
+                pupilName = "No pupil name found",
+                pupilCountry = "No pupil country found",
+            )
+        )
     }
 
     private fun handleLoadingEvent() = with(binding) {

@@ -1,11 +1,11 @@
-package com.bridge.androidtechnicaltest.data.network
+package com.bridge.androidtechnicaltest.data.sources.network
 
 import com.bridge.androidtechnicaltest.core.utils.data.NetworkError
 import com.bridge.androidtechnicaltest.core.utils.data.NetworkResult
 import com.bridge.androidtechnicaltest.core.utils.data.safeApiCall
-import com.bridge.androidtechnicaltest.data.network.model.AddPupilsDto
-import com.bridge.androidtechnicaltest.data.network.model.PupilsDto
-import com.bridge.androidtechnicaltest.data.network.model.PupilsResponseDto
+import com.bridge.androidtechnicaltest.data.sources.network.model.AddPupilsDto
+import com.bridge.androidtechnicaltest.data.sources.network.model.PupilsDto
+import com.bridge.androidtechnicaltest.data.sources.network.model.PupilsResponseDto
 
 // To provide this in koin
 interface PupilApiService {

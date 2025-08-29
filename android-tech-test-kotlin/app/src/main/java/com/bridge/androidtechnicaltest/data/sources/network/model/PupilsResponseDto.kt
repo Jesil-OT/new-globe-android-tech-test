@@ -1,7 +1,6 @@
-package com.bridge.androidtechnicaltest.data.network.model
+package com.bridge.androidtechnicaltest.data.sources.network.model
 
 import com.google.gson.annotations.SerializedName
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
 @Serializable

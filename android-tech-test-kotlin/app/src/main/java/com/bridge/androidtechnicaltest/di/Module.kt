@@ -1,13 +1,13 @@
 package com.bridge.androidtechnicaltest.di
 
 import androidx.room.Room
-import com.bridge.androidtechnicaltest.data.local.AppDatabase
-import com.bridge.androidtechnicaltest.data.local.DatabaseFactory
-import com.bridge.androidtechnicaltest.data.local.PupilsDao
-import com.bridge.androidtechnicaltest.data.network.PupilApiService
-import com.bridge.androidtechnicaltest.data.network.PupilApiServiceImpl
-import com.bridge.androidtechnicaltest.data.network.PupilServiceFactory
-import com.bridge.androidtechnicaltest.data.network.RetrofitFactory
+import com.bridge.androidtechnicaltest.data.sources.local.AppDatabase
+import com.bridge.androidtechnicaltest.data.sources.local.DatabaseFactory
+import com.bridge.androidtechnicaltest.data.sources.local.PupilsDao
+import com.bridge.androidtechnicaltest.data.sources.network.PupilApiService
+import com.bridge.androidtechnicaltest.data.sources.network.PupilApiServiceImpl
+import com.bridge.androidtechnicaltest.data.sources.network.PupilServiceFactory
+import com.bridge.androidtechnicaltest.data.sources.network.RetrofitFactory
 import com.bridge.androidtechnicaltest.data.repository.CreatePupilRepository
 import com.bridge.androidtechnicaltest.data.repository.CreatePupilRepositoryImpl
 import com.bridge.androidtechnicaltest.data.repository.DeletePupilRepository

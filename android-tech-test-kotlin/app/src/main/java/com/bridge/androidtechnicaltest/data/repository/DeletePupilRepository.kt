@@ -4,8 +4,8 @@ import com.bridge.androidtechnicaltest.R
 import com.bridge.androidtechnicaltest.core.Resource
 import com.bridge.androidtechnicaltest.core.utils.data.NetworkError
 import com.bridge.androidtechnicaltest.core.utils.data.NetworkResult
-import com.bridge.androidtechnicaltest.data.local.PupilsDao
-import com.bridge.androidtechnicaltest.data.network.PupilApiService
+import com.bridge.androidtechnicaltest.data.sources.local.PupilsDao
+import com.bridge.androidtechnicaltest.data.sources.network.PupilApiService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 

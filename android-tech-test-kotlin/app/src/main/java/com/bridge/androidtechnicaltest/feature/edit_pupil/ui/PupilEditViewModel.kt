@@ -17,16 +17,17 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class PupilEditViewModel(
     private val repository: EditPupilRepository
 ) : ViewModel() {
 
-    private val _pupil = MutableStateFlow<PupilUI>(PupilUI())
+    private val _pupil = MutableStateFlow<EditPupilUI>(EditPupilUI())
     val pupil = _pupil.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5000L),
-        PupilUI()
+        EditPupilUI()
     )
 
     private val _handleEventState = MutableSharedFlow<EditPupilOneTimeEvent>()
@@ -41,8 +42,9 @@ class PupilEditViewModel(
                 .collect { pupil ->
                     _pupil.update {
                         it.copy(
-                            pupilId = pupil.id.toString(),
-                            pupilName = "${pupil.firstName} ${pupil.lastName}",
+                            pupilId = pupil.id,
+                            pupilFirstName = pupil.firstName,
+                            pupilLastName = pupil.lastName,
                             pupilLocation = pupil.country,
                             pupilImage = pupil.image,
                             pupilCountry = pupil.country,
@@ -70,6 +72,7 @@ class PupilEditViewModel(
             latitude = RandGenerator.randomLatitude().toString().take(7),
             longitude = RandGenerator.randomLongitude().toString().take(7)
         ).toPupil()
+        Timber.tag("PupilEditViewModel").d("updatePupil body fields: $editPupil")
         viewModelScope.launch {
             repository.editPupil(pupilId.toInt(), editPupil).collect { response ->
                 when (response) {

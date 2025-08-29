@@ -1,9 +1,8 @@
-package com.bridge.androidtechnicaltest.data.network
+package com.bridge.androidtechnicaltest.data.sources.network
 
-import com.bridge.androidtechnicaltest.data.network.model.AddPupilsDto
-import com.bridge.androidtechnicaltest.data.network.model.PupilsDto
-import com.bridge.androidtechnicaltest.data.network.model.PupilsResponseDto
-import kotlinx.serialization.InternalSerializationApi
+import com.bridge.androidtechnicaltest.data.sources.network.model.AddPupilsDto
+import com.bridge.androidtechnicaltest.data.sources.network.model.PupilsDto
+import com.bridge.androidtechnicaltest.data.sources.network.model.PupilsResponseDto
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE

@@ -17,6 +17,7 @@ import com.bridge.androidtechnicaltest.core.utils.ui.Utils.trimMultipleSpaces
 import com.bridge.androidtechnicaltest.core.utils.ui.provideGlide
 import com.bridge.androidtechnicaltest.databinding.FragmentEditpupilBinding
 import com.bridge.androidtechnicaltest.feature.create_pupil.model.countries
+import com.bridge.androidtechnicaltest.feature.edit_pupil.model.EditPupilUI
 import com.bridge.androidtechnicaltest.feature.pupil.models.PupilUI
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
@@ -37,9 +38,9 @@ class PupilEditFragment : Fragment(R.layout.fragment_editpupil), TextWatcher {
         setUpAction()
     }
 
-    private fun setUpTextFields(pupil: PupilUI) = with(binding) {
-        firstNameTextField.setText(pupil.pupilName.split(" ").getOrNull(0) ?: "")
-        lastNameTextField.setText(pupil.pupilName.split(" ").getOrNull(1) ?: "")
+    private fun setUpTextFields(pupil: EditPupilUI) = with(binding) {
+        firstNameTextField.setText(pupil.pupilFirstName)
+        lastNameTextField.setText(pupil.pupilLastName)
         countryTextField.setText(pupil.pupilCountry)
         root.provideGlide(image = pupilImage, load = pupil.pupilImage)
     }

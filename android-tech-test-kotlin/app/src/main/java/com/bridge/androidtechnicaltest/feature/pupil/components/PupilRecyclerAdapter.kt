@@ -40,7 +40,7 @@ class PupilRecyclerAdapter(
                 val position = bindingAdapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     val pupil = getItem(position)
-                    pupilAction.navigateToPupilDetail(pupil.pupilId.toInt())
+                    pupilAction.navigateToPupilDetail(pupil.pupilId)
                 }
             }
         }

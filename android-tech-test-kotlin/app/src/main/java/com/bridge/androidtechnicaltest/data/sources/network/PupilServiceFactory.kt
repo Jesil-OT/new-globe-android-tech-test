@@ -1,4 +1,4 @@
-package com.bridge.androidtechnicaltest.data.network
+package com.bridge.androidtechnicaltest.data.sources.network
 
 import retrofit2.Retrofit
 

@@ -1,12 +1,12 @@
 package com.bridge.androidtechnicaltest.feature.pupil_details.ui
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bridge.androidtechnicaltest.R
 import com.bridge.androidtechnicaltest.core.Resource
+import com.bridge.androidtechnicaltest.data.model.Pupil
 import com.bridge.androidtechnicaltest.data.repository.DeletePupilRepository
 import com.bridge.androidtechnicaltest.data.repository.PupilDetailRepository
-import com.bridge.androidtechnicaltest.feature.pupil_details.models.DeletePupilResponse
 import com.bridge.androidtechnicaltest.feature.pupil_details.models.DetailPupilUI
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,6 +17,9 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
+
+const val DETAIL_VIEWMODEL = "PupilDetailViewModel"
 
 class PupilDetailViewModel(
     private val pupilDetailsRepository: PupilDetailRepository,
@@ -40,34 +43,48 @@ class PupilDetailViewModel(
         pupilDetailsRepository.getPupil(pupilId).collect { uiState ->
             when (uiState) {
                 is Resource.Success -> {
-                    val uiState = uiState.data
-                    _pupilDetails.update {
-                        it.copy(
-                            pupilId = uiState.id.toString(),
-                            pupilName = "${uiState.firstName} ${uiState.lastName}",
-                            pupilLocation = "${uiState.longitude}, ${uiState.latitude}",
-                            pupilCountry = uiState.country,
-                            pupilImage = uiState.image,
-                        )
+                    val pupilDetail = uiState.data
+                    if (pupilDetail.emptyDetailsUI()) {
+                        isPupilFound.value = false
+                        _pupilDetails.value = DetailPupilUI()
+                        _handleEventState.emit(PupilDetailOneTimeEvent.NotFoundEvent(R.string.not_found_details))
+                    } else {
+                        _pupilDetails.update {
+                            it.copy(
+                                pupilId = pupilDetail.id.toString(),
+                                pupilName = "${pupilDetail.firstName} ${pupilDetail.lastName}",
+                                pupilLocation = "${pupilDetail.longitude}, ${pupilDetail.latitude}",
+                                pupilCountry = pupilDetail.country,
+                                pupilImage = pupilDetail.image,
+                            )
+                        }
+                        isPupilFound.value = true
+                        _handleEventState.emit(PupilDetailOneTimeEvent.SuccessEvent)
+                        Timber.tag(DETAIL_VIEWMODEL)
+                            .d("observerPupilChanges: PupilDetailOneTimeEvent.SuccessEvent called")
                     }
-                    isPupilFound.value = true
-                    _handleEventState.emit(PupilDetailOneTimeEvent.SuccessEvent)
                 }
 
                 is Resource.Loading -> {
                     _handleEventState.emit(PupilDetailOneTimeEvent.LoadingEvent)
                     isPupilFound.value = false
+                    Timber.tag(DETAIL_VIEWMODEL)
+                        .d("observerPupilChanges: PupilDetailOneTimeEvent.LoadingEvent called")
                 }
 
                 is Resource.NotFoundData -> {
                     _handleEventState.emit(PupilDetailOneTimeEvent.NotFoundEvent(uiState.message))
                     _pupilDetails.value = DetailPupilUI()
                     isPupilFound.value = false
+                    Timber.tag(DETAIL_VIEWMODEL)
+                        .d("observerPupilChanges: PupilDetailOneTimeEvent.NotFoundEvent called")
                 }
 
                 is Resource.Error -> {
                     _handleEventState.emit(PupilDetailOneTimeEvent.ErrorEvent(uiState.message))
                     isPupilFound.value = true
+                    Timber.tag(DETAIL_VIEWMODEL)
+                        .d("observerPupilChanges: PupilDetailOneTimeEvent.ErrorEvent called")
                 }
             }
         }
@@ -78,19 +95,19 @@ class PupilDetailViewModel(
             when (uiState) {
                 is Resource.Loading -> {
                     _deleteEventState.emit(DeleteOneTimeEvent.LoadingEvent)
-                    Log.d("PupilDetailsViewModel", "delete state loading:")
+                    Timber.tag(DETAIL_VIEWMODEL).d("delete state loading:")
                     isPupilFound.value = false
                 }
 
                 is Resource.Success -> {
-                    Log.d("PupilDetailsViewModel", "delete state success:")
+                    Timber.tag(DETAIL_VIEWMODEL).d("delete state success:")
                     isPupilFound.value = false
                     _deleteEventState.emit(DeleteOneTimeEvent.SuccessEvent)
                 }
 
                 is Resource.Error -> {
                     _deleteEventState.emit(DeleteOneTimeEvent.DeleteErrorEvent(uiState.message))
-                    Log.d("PupilDetailsViewModel", "delete state error:")
+                    Timber.tag(DETAIL_VIEWMODEL).d("delete state error:")
                     isPupilFound.value = true
                 }
 
@@ -101,6 +118,16 @@ class PupilDetailViewModel(
             }
         }
     }
+
+    private fun Pupil.emptyDetailsUI(
+    ): Boolean =
+        id.toString().isEmpty() &&
+                firstName.isEmpty() &&
+                lastName.isEmpty() && country.isEmpty() &&
+                image.isEmpty() &&
+                latitude.toString().isEmpty() &&
+                longitude.toString().isEmpty()
+
 }
 
 sealed interface PupilDetailOneTimeEvent {
@@ -110,7 +137,7 @@ sealed interface PupilDetailOneTimeEvent {
     object SuccessEvent : PupilDetailOneTimeEvent
 }
 
-sealed interface DeleteOneTimeEvent{
+sealed interface DeleteOneTimeEvent {
     data class DeleteErrorEvent(val errorMessage: Int) : DeleteOneTimeEvent
     data class NotFoundEvent(val errorMessage: Int) : DeleteOneTimeEvent
     object LoadingEvent : DeleteOneTimeEvent

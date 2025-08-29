@@ -102,12 +102,14 @@ class PupilFragment : Fragment(R.layout.fragment_pupillist), PupilAction {
         }
     }
 
-    private fun handleErrorEvent(eventMessage: Int) {
+    private fun handleErrorEvent(eventMessage: Int)= with(binding) {
         hideLoading()
-        Snackbar.make(binding.root, eventMessage, Snackbar.LENGTH_LONG).show()
+        pupilList.isEnabled = true
+        Snackbar.make(root, eventMessage, Snackbar.LENGTH_LONG).show()
     }
 
     private fun handleLoadingEvent() = with(binding) {
+        pupilList.isEnabled = false
         swipeRefresh.isRefreshing = true
     }
 
@@ -115,11 +117,13 @@ class PupilFragment : Fragment(R.layout.fragment_pupillist), PupilAction {
         hideLoading()
         pupilList.visibility = View.GONE
         notFoundError.visibility = View.VISIBLE
+        pupilList.isEnabled = true
     }
 
     private fun handleSuccessEvent() = with(binding) {
         notFoundError.visibility = View.GONE
         pupilList.visibility = View.VISIBLE
+        pupilList.isEnabled = true
         hideLoading()
     }
 

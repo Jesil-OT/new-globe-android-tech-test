@@ -4,23 +4,26 @@ import com.bridge.androidtechnicaltest.R
 import com.bridge.androidtechnicaltest.core.Resource
 import com.bridge.androidtechnicaltest.core.utils.data.NetworkError
 import com.bridge.androidtechnicaltest.core.utils.data.NetworkResult
-import com.bridge.androidtechnicaltest.data.local.PupilsDao
+import com.bridge.androidtechnicaltest.data.mapper.fromPupilToEntity
 import com.bridge.androidtechnicaltest.data.mapper.toPupilDto
 import com.bridge.androidtechnicaltest.data.mapper.toPupilEntity
-import com.bridge.androidtechnicaltest.data.mapper.fromPupilToEntity
 import com.bridge.androidtechnicaltest.data.model.Pupil
-import com.bridge.androidtechnicaltest.data.network.PupilApiService
+import com.bridge.androidtechnicaltest.data.sources.local.PupilsDao
+import com.bridge.androidtechnicaltest.data.sources.network.PupilApiService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 typealias DetailsResourceFlow = Flow<Resource<Pupil>>
+
+const val DETAIL_TAG = "PupilDetailRepository"
 
 class PupilDetailRepositoryImpl(
     private val localDataSource: PupilsDao,
@@ -36,9 +39,13 @@ class PupilDetailRepositoryImpl(
 
     override fun getPupil(pupilId: Int): DetailsResourceFlow = flow {
         // get from cached first
-        val cachedPupil = localDataSource.getPupil(pupilId).filterNotNull().first()
-//        emit(DetailPupilResponse.InitialData(pupil = cachedPupil.toPupilEntity()))
-        emit(Resource.Success(data = cachedPupil.toPupilEntity()))
+        val cachedPupil = localDataSource.getPupil(pupilId).firstOrNull()
+
+        emit(Resource.Success(data = cachedPupil?.toPupilEntity() ?: emptyPupil()))
+
+        Timber.tag(DETAIL_TAG).d("pupilId: first the pupil id to track pupil changes $pupilId")
+
+        Timber.tag(DETAIL_TAG).d("This is the single source of truth data: $cachedPupil")
 
         // fetch data from network
         emit(Resource.Loading)
@@ -49,6 +56,7 @@ class PupilDetailRepositoryImpl(
                 // delete from local database to avoid duplication or data inconsistencies
                 savePupilToLocal(remotePupil.toPupilDto())
                 // emit the new data
+                Timber.tag(TAG).d("data from network truth data: $remotePupil")
                 emit(
                     Resource.Success(
                         data = getPupilsFromSingleSource(pupilId).first(),
@@ -89,6 +97,17 @@ class PupilDetailRepositoryImpl(
             localDataSource.insertPupil(pupils.fromPupilToEntity())
         }
     }
+
+    private fun emptyPupil() =
+        Pupil(
+            id = 0,
+            firstName = "",
+            lastName = "",
+            country = "",
+            image = "",
+            latitude = 0.0,
+            longitude = 0.0
+        )
 }
 
 interface PupilDetailRepository {

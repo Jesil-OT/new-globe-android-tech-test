@@ -57,7 +57,7 @@
     <string name="server_error_update_pupil">server-side network issue while updating pupil, please try again later</string>
     <string name="service_error_update_pupil">Service Unavailable, please try again later to save your edited changes</string>
     <string name="connection_time_out_update">The server took too long to respond. Please check your network and try again to save your edited changes.</string>
-    <string name="bad_request_update_pupil">Bad Request from server, please check fields to input right information 💩</string>
+    <string name="bad_request_update_pupil">Bad Request from server while updating pupil 💩</string>
     <string name="not_found_update_pupil">This Pupil you are trying to edit/update does not exist, must have been deleted from the server</string>
 
 </resources>

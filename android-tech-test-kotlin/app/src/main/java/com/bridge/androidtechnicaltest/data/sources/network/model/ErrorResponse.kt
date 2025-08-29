@@ -1,4 +1,4 @@
-package com.bridge.androidtechnicaltest.data.network.model
+package com.bridge.androidtechnicaltest.data.sources.network.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

@@ -1,4 +1,4 @@
-package com.bridge.androidtechnicaltest.data.local.model
+package com.bridge.androidtechnicaltest.data.sources.local.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

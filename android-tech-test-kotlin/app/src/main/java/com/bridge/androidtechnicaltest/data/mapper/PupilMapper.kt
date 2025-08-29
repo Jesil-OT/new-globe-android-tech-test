@@ -1,9 +1,9 @@
 package com.bridge.androidtechnicaltest.data.mapper
 
-import com.bridge.androidtechnicaltest.data.local.model.PupilsEntity
+import com.bridge.androidtechnicaltest.data.sources.local.model.PupilsEntity
 import com.bridge.androidtechnicaltest.data.model.Pupil
-import com.bridge.androidtechnicaltest.data.network.model.AddPupilsDto
-import com.bridge.androidtechnicaltest.data.network.model.PupilsDto
+import com.bridge.androidtechnicaltest.data.sources.network.model.AddPupilsDto
+import com.bridge.androidtechnicaltest.data.sources.network.model.PupilsDto
 
 fun Pupil.fromPupilToEntity(): PupilsEntity {
     return PupilsEntity(

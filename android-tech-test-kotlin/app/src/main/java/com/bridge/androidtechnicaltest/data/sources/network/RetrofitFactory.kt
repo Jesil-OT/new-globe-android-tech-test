@@ -1,4 +1,4 @@
-package com.bridge.androidtechnicaltest.data.network
+package com.bridge.androidtechnicaltest.data.sources.network
 
 import com.bridge.androidtechnicaltest.core.utils.data.Constants
 import okhttp3.Interceptor

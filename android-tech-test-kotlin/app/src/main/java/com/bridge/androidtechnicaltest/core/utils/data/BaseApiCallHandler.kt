@@ -2,7 +2,7 @@
 
 package com.bridge.androidtechnicaltest.core.utils.data
 
-import com.bridge.androidtechnicaltest.data.network.model.ErrorResponse
+import com.bridge.androidtechnicaltest.data.sources.network.model.ErrorResponse
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
