@@ -5,13 +5,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bridge.androidtechnicaltest.R
+import com.bridge.androidtechnicaltest.core.utils.ui.provideGlide
 import com.bridge.androidtechnicaltest.databinding.PupilItemBinding
 import com.bridge.androidtechnicaltest.feature.pupil.components.PupilRecyclerAdapter.PupilViewHolder
 import com.bridge.androidtechnicaltest.feature.pupil.models.PupilUI
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.bumptech.glide.request.RequestOptions
 
 class PupilRecyclerAdapter(
     private val pupilAction: PupilAction
@@ -51,16 +48,10 @@ class PupilRecyclerAdapter(
         fun bind(pupil: PupilUI) {
             binding.pupilName.text = pupil.pupilName
             binding.pupilLocation.text = pupil.pupilCountry
-
-            val requestOptions = RequestOptions()
-                .placeholder(R.drawable.ic_sync)
-                .error(R.drawable.ic_error)
-
-            Glide.with(itemView)
-                .load(pupil.pupilImage)
-                .apply(requestOptions)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(binding.pupilImage)
+            itemView.provideGlide(
+                load = pupil.pupilImage,
+                image = binding.pupilImage
+            )
         }
     }
 

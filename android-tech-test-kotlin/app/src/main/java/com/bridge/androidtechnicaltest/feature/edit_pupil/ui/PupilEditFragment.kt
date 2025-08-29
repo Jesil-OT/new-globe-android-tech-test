@@ -1,11 +1,11 @@
-package com.bridge.androidtechnicaltest.feature.edit_pupil
+package com.bridge.androidtechnicaltest.feature.edit_pupil.ui
 
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -13,9 +13,10 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bridge.androidtechnicaltest.R
+import com.bridge.androidtechnicaltest.core.utils.ui.Utils.trimMultipleSpaces
 import com.bridge.androidtechnicaltest.core.utils.ui.provideGlide
 import com.bridge.androidtechnicaltest.databinding.FragmentEditpupilBinding
-import com.bridge.androidtechnicaltest.feature.add_pupil.model.countries
+import com.bridge.androidtechnicaltest.feature.create_pupil.model.countries
 import com.bridge.androidtechnicaltest.feature.pupil.models.PupilUI
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
@@ -39,13 +40,11 @@ class PupilEditFragment : Fragment(R.layout.fragment_editpupil), TextWatcher {
     private fun setUpTextFields(pupil: PupilUI) = with(binding) {
         firstNameTextField.setText(pupil.pupilName.split(" ").getOrNull(0) ?: "")
         lastNameTextField.setText(pupil.pupilName.split(" ").getOrNull(1) ?: "")
-        idTextField.setText(pupil.pupilId)
         countryTextField.setText(pupil.pupilCountry)
         root.provideGlide(image = pupilImage, load = pupil.pupilImage)
     }
 
     private fun setUpView() = with(binding) {
-        idTextField.addTextChangedListener(this@PupilEditFragment)
         firstNameTextField.addTextChangedListener(this@PupilEditFragment)
         lastNameTextField.addTextChangedListener(this@PupilEditFragment)
         countryTextField.addTextChangedListener(this@PupilEditFragment)
@@ -55,16 +54,14 @@ class PupilEditFragment : Fragment(R.layout.fragment_editpupil), TextWatcher {
 
     private fun setUpAction() = with(binding) {
         saveButton.setOnClickListener {
-            val pupilId = idTextField.text.toString()
-            val pupilFirstName = firstNameTextField.text.toString()
-            val pupilLastName = lastNameTextField.text.toString()
-            val pupilCountry = countryTextField.text.toString()
+            val pupilFirstName = firstNameTextField.text.toString().trimMultipleSpaces()
+            val pupilLastName = lastNameTextField.text.toString().trimMultipleSpaces()
+            val pupilCountry = countryTextField.text.toString().trimMultipleSpaces()
             viewModel.updatePupil(
-                pupilId = pupilId,
+                pupilId = args.pupilId,
                 pupilFirstname = pupilFirstName,
                 pupilLastName = pupilLastName,
                 pupilCountry = pupilCountry,
-                pupilImage = ""
             )
         }
         cancelButton.setOnClickListener {
@@ -88,18 +85,15 @@ class PupilEditFragment : Fragment(R.layout.fragment_editpupil), TextWatcher {
                 }
 
                 launch {
-                    viewModel.responseUiState.collect { uiResponse ->
-                        when (uiResponse) {
-                            is PupilEditViewModel.EditPupilUIResponse.Idle -> {}
-                            is PupilEditViewModel.EditPupilUIResponse.PupilEdited -> successState(
-                                getString(
-                                    R.string.pupil_updated
-                                )
-                            )
-                            is PupilEditViewModel.EditPupilUIResponse.ErrorEditingPupil -> errorState(
-                                uiResponse.errorMessage
-                            )
-                            is PupilEditViewModel.EditPupilUIResponse.Loading -> loadingState()
+                    viewModel.handleEventState.collect { event ->
+                        when (event) {
+
+                            is PupilEditViewModel.EditPupilOneTimeEvent.ErrorEvent -> handleErrorEvent(event.errorMessage)
+
+                            is PupilEditViewModel.EditPupilOneTimeEvent.LoadingEvent -> handleLoadingEvent()
+
+                            is PupilEditViewModel.EditPupilOneTimeEvent.SuccessEvent -> handleSuccessEvent()
+
                         }
                     }
                 }
@@ -107,24 +101,33 @@ class PupilEditFragment : Fragment(R.layout.fragment_editpupil), TextWatcher {
         }
     }
 
-    private fun loadingState() {
-        binding.loadingView.visibility = View.VISIBLE
-        otherViewState(state = false)
+    private fun handleSuccessEvent() {
+        hideLoading()
+        disableOtherViews(state = true)
+        findNavController().popBackStack()
+        Toast.makeText(requireContext(), getString(R.string.pupil_updated), Toast.LENGTH_SHORT).show()
     }
 
-    private fun errorState(errorMessage: String) {
-        binding.loadingView.visibility = View.GONE
-        otherViewState(state = true)
-        Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_SHORT).show()
+    private fun handleLoadingEvent() = with(binding) {
+        loadingView.visibility = View.VISIBLE
+        saveButton.isEnabled = false
+        disableOtherViews(state = false)
     }
 
-    private fun successState(message: String) {
-        binding.loadingView.visibility = View.GONE
-        otherViewState(state = true)
-        Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
+    private fun handleErrorEvent(
+        eventMessage: Int
+    ) {
+        hideLoading()
+        disableOtherViews(state = true)
+        Snackbar.make(binding.root, eventMessage, Snackbar.LENGTH_SHORT).show()
     }
 
-    private fun otherViewState(state: Boolean) = with(binding) {
+    private fun hideLoading() = with(binding) {
+        loadingView.visibility = View.GONE
+        saveButton.isEnabled = true
+    }
+
+    private fun disableOtherViews(state: Boolean) = with(binding) {
         saveButton.isEnabled = state
         nameTextFieldLayout.isEnabled = state
         lastNameTextFieldLayout.isEnabled = state
@@ -153,8 +156,7 @@ class PupilEditFragment : Fragment(R.layout.fragment_editpupil), TextWatcher {
     ) {
         binding.apply {
             saveButton.isEnabled =
-                !idTextField.text.isNullOrBlank() &&
-                        !firstNameTextField.text.isNullOrBlank()
+                !firstNameTextField.text.isNullOrBlank()
                         && !lastNameTextField.text.isNullOrBlank()
                         && !countryTextField.text.isNullOrBlank()
         }

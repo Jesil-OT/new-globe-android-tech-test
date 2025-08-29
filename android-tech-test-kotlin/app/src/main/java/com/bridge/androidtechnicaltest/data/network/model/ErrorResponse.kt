@@ -1,6 +1,5 @@
-package com.bridge.androidtechnicaltest.core
+package com.bridge.androidtechnicaltest.data.network.model
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement

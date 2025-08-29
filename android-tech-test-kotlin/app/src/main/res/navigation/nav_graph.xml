@@ -27,12 +27,12 @@
     </fragment>
     <fragment
         android:id="@+id/addPupilFragment"
-        android:name="com.bridge.androidtechnicaltest.feature.add_pupil.AddPupilFragment"
+        android:name="com.bridge.androidtechnicaltest.feature.create_pupil.ui.CreatePupilFragment"
         android:label="@string/create_pupil"
-        tools:layout="@layout/fragment_addpupil" />
+        tools:layout="@layout/fragment_create_pupil" />
     <fragment
         android:id="@+id/pupilDetailFragment"
-        android:name="com.bridge.androidtechnicaltest.feature.pupil_info.PupilDetailFragment"
+        android:name="com.bridge.androidtechnicaltest.feature.pupil_details.ui.PupilDetailFragment"
         android:label="Pupil Details"
         tools:layout="@layout/fragment_pupildetail">
         <argument
@@ -48,7 +48,7 @@
     </fragment>
     <fragment
         android:id="@+id/pupilEditFragment"
-        android:name="com.bridge.androidtechnicaltest.feature.edit_pupil.PupilEditFragment"
+        android:name="com.bridge.androidtechnicaltest.feature.edit_pupil.ui.PupilEditFragment"
         android:label="Edit"
         tools:layout="@layout/fragment_editpupil" >
         <argument

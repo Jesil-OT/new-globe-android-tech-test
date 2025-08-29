@@ -3,10 +3,10 @@ package com.bridge.androidtechnicaltest.feature.pupil.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bridge.androidtechnicaltest.core.Resource
 import com.bridge.androidtechnicaltest.data.model.Pupil
 import com.bridge.androidtechnicaltest.data.repository.PupilsRepository
 import com.bridge.androidtechnicaltest.feature.pupil.models.PupilUI
-import com.bridge.androidtechnicaltest.feature.pupil.models.PupilResponse
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -20,8 +20,8 @@ class PupilViewModel(
     private val repository: PupilsRepository
 ) : ViewModel() {
 
-    private val _pupilData = MutableStateFlow<List<PupilUI>>(emptyList())
-    val pupilData: StateFlow<List<PupilUI>> = _pupilData.stateIn(
+    private val _pupilsData = MutableStateFlow<List<PupilUI>>(emptyList())
+    val pupilsData: StateFlow<List<PupilUI>> = _pupilsData.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5000L),
         emptyList()
@@ -30,32 +30,33 @@ class PupilViewModel(
     private val _handleEventState: MutableSharedFlow<PupilOneTimeEvent> = MutableSharedFlow()
     val handleEventState: SharedFlow<PupilOneTimeEvent> = _handleEventState.asSharedFlow()
 
-    init {
-        observerPupilChanges()
-    }
+    val emptyListEvent : MutableSharedFlow<Boolean> = MutableSharedFlow()
 
-    fun observerPupilChanges() = viewModelScope.launch {
+
+    fun observerPupilsChanges() = viewModelScope.launch {
         repository.fetchPupils().collect { uiState ->
             when (uiState) {
-                is PupilResponse.Loading -> {
-                    val showLoadingType = uiState.pupil?.map { it.toPupilUI() }
-                    _handleEventState.emit(PupilOneTimeEvent.LoadingEvent(showLoadingType ?: emptyList()))
+                is Resource.Success -> {
+                    // loads the initial data from single source
+                    val currentPupilList: List<PupilUI> = uiState.data.map { it.toPupilUI() }
+                    if (currentPupilList.isEmpty()){
+                        emptyListEvent.emit(true)
+                    } else {
+                        _pupilsData.value = currentPupilList
+                    }
+                    _handleEventState.emit(PupilOneTimeEvent.SuccessEvent)
                 }
 
-                is PupilResponse.Error -> {
+                is Resource.Loading -> {
+                    _handleEventState.emit(PupilOneTimeEvent.LoadingEvent)
+                }
+
+                is Resource.Error -> {
                     _handleEventState.emit(PupilOneTimeEvent.ErrorEvent(uiState.message))
                 }
 
-                is PupilResponse.Success -> {
-                    val syncedPupilList = uiState.pupils.map { it.toPupilUI() }
-                    _pupilData.value = syncedPupilList
-                    _handleEventState.emit(PupilOneTimeEvent.SuccessEvent(syncedPupilList, successSource = SuccessSource.SYNCED))
-                }
-
-                is PupilResponse.SuccessFromSingleSource -> {
-                    val currentPupilList = uiState.pupils.map { it.toPupilUI() }
-                    _pupilData.value = currentPupilList
-                    _handleEventState.emit(PupilOneTimeEvent.SuccessEvent(currentPupilList, successSource = SuccessSource.SINGLE_SOURCE))
+                is Resource.NotFoundData -> {
+                    _handleEventState.emit(PupilOneTimeEvent.NotFoundEvent(uiState.message))
                 }
             }
         }
@@ -64,17 +65,10 @@ class PupilViewModel(
 
 
 sealed interface PupilOneTimeEvent{
-    data class ErrorEvent(val errorMessage: String) : PupilOneTimeEvent
-    data class LoadingEvent(val pupilList: List<PupilUI>): PupilOneTimeEvent
-    data class SuccessEvent(val pupils: List<PupilUI>, val successSource: SuccessSource) : PupilOneTimeEvent
-}
-enum class SuccessSource {
-    SYNCED, SINGLE_SOURCE
-}
-
-sealed interface PupilUIResponse {
-    data class ReturnedWithSyncedList(val syncedList: List<PupilUI>) : PupilUIResponse
-    data class ReturnedFromSingleSource(val pupilList: List<PupilUI> = emptyList()) : PupilUIResponse
+    object SuccessEvent: PupilOneTimeEvent
+    object LoadingEvent: PupilOneTimeEvent
+    data class ErrorEvent(val errorMessage: Int) : PupilOneTimeEvent
+    data class NotFoundEvent(val errorMessage: Int) : PupilOneTimeEvent
 }
 
 fun Pupil.toPupilUI(): PupilUI {

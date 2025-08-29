@@ -1,4 +1,4 @@
-package com.bridge.androidtechnicaltest.feature.add_pupil
+package com.bridge.androidtechnicaltest.feature.create_pupil.ui
 
 import android.os.Bundle
 import android.text.Editable
@@ -11,22 +11,24 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.bridge.androidtechnicaltest.R
+import com.bridge.androidtechnicaltest.core.utils.ui.Utils.trimMultipleSpaces
 import com.bridge.androidtechnicaltest.core.utils.ui.provideGlide
-import com.bridge.androidtechnicaltest.databinding.FragmentAddpupilBinding
-import com.bridge.androidtechnicaltest.feature.add_pupil.model.countries
+import com.bridge.androidtechnicaltest.databinding.FragmentCreatePupilBinding
+import com.bridge.androidtechnicaltest.feature.create_pupil.model.countries
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class AddPupilFragment : Fragment(R.layout.fragment_addpupil), TextWatcher {
-    private var _binding: FragmentAddpupilBinding? = null
+class CreatePupilFragment : Fragment(R.layout.fragment_create_pupil), TextWatcher {
+    private var _binding: FragmentCreatePupilBinding? = null
     private val binding get() = _binding!!
     private val viewModel: AddPupilViewModel by viewModel()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        _binding = FragmentAddpupilBinding.bind(view)
+        _binding = FragmentCreatePupilBinding.bind(view)
         setUpObservers()
         setUpViews()
         setUpActions()
@@ -34,17 +36,17 @@ class AddPupilFragment : Fragment(R.layout.fragment_addpupil), TextWatcher {
 
     private fun setUpViews() = with(binding) {
         root.provideGlide(image = pupilImage, load = "")
-        firstNameTextField.addTextChangedListener(this@AddPupilFragment)
-        lastNameTextField.addTextChangedListener(this@AddPupilFragment)
-        editCountryTextField.addTextChangedListener(this@AddPupilFragment)
+        firstNameTextField.addTextChangedListener(this@CreatePupilFragment)
+        lastNameTextField.addTextChangedListener(this@CreatePupilFragment)
+        editCountryTextField.addTextChangedListener(this@CreatePupilFragment)
         setUpCountryAdapter()
     }
 
     private fun setUpActions() = with(binding) {
         createPupilButton.setOnClickListener {
-            val pupilFirstName = firstNameTextField.text.toString()
-            val pupilLastName = lastNameTextField.text.toString()
-            val pupilCountry = editCountryTextField.text.toString()
+            val pupilFirstName = firstNameTextField.text.toString().trimMultipleSpaces()
+            val pupilLastName = lastNameTextField.text.toString().trimMultipleSpaces()
+            val pupilCountry = editCountryTextField.text.toString().trimMultipleSpaces()
             viewModel.addPupil(pupilFirstName, pupilLastName, pupilCountry)
         }
     }
@@ -52,47 +54,57 @@ class AddPupilFragment : Fragment(R.layout.fragment_addpupil), TextWatcher {
     private fun setUpCountryAdapter() = with(binding) {
         val arrayAdapter = ArrayAdapter(requireContext(), R.layout.country_item, countries)
         editCountryTextField.setAdapter(arrayAdapter)
-
     }
 
     private fun setUpObservers() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.responseUiState.collect { uiResponse ->
-                    when (uiResponse) {
-                        is AddPupilUIResponse.Idle -> {}
-                        is AddPupilUIResponse.PupilAdded -> successState(
+                viewModel.handleEventState.collect { event ->
+                    when (event) {
+                        is AddPupilOneTimeEvent.PupilAddedEvent -> handleSuccessEvent(
                             getString(
                                 R.string.new_pupil_created,
-                                uiResponse.pupilName
+                                event.pupilName
                             )
                         )
-                        is AddPupilUIResponse.ErrorAddingPupil -> errorState(uiResponse.errorMessage)
-                        is AddPupilUIResponse.Loading -> loadingState()
+
+                        is AddPupilOneTimeEvent.ErrorEvent -> handleErrorEvent(event.errorMessage)
+                        is AddPupilOneTimeEvent.LoadingEvent -> handleLoadingEvent()
                     }
                 }
             }
         }
     }
 
-    private fun loadingState() {
-        binding.loadingView.visibility = View.VISIBLE
-        otherViewState(state = false)
+    private fun handleSuccessEvent(
+        eventMessage: String
+    ) {
+        hideLoading()
+        disableOtherViews(state = true)
+        findNavController().popBackStack()
+        Toast.makeText(requireContext(), eventMessage, Toast.LENGTH_SHORT).show()
     }
 
-    private fun errorState(errorMessage: String) {
-        binding.loadingView.visibility = View.GONE
-        otherViewState(state = true)
-        Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_SHORT).show()
+    private fun handleErrorEvent(
+        eventMessage: Int
+    ) {
+        hideLoading()
+        disableOtherViews(state = true)
+        Snackbar.make(binding.root, eventMessage, Snackbar.LENGTH_SHORT).show()
     }
 
-    private fun successState(message: String) {
-        binding.loadingView.visibility = View.GONE
-        otherViewState(state = true)
-        Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
+    private fun handleLoadingEvent() = with(binding) {
+        loadingView.visibility = View.VISIBLE
+        createPupilButton.isEnabled = false
+        disableOtherViews(state = false)
     }
 
-    private fun otherViewState(state: Boolean) = with(binding){
+    private fun hideLoading() = with(binding) {
+        loadingView.visibility = View.GONE
+        createPupilButton.isEnabled = true
+    }
+
+    private fun disableOtherViews(state: Boolean) = with(binding) {
         createPupilButton.isEnabled = state
         nameTextFieldLayout.isEnabled = state
         lastNameTextFieldLayout.isEnabled = state
@@ -106,6 +118,7 @@ class AddPupilFragment : Fragment(R.layout.fragment_addpupil), TextWatcher {
         after: Int
     ) {
     }
+
     override fun onTextChanged(
         s: CharSequence?,
         start: Int,
@@ -119,10 +132,12 @@ class AddPupilFragment : Fragment(R.layout.fragment_addpupil), TextWatcher {
                         && !editCountryTextField.text.isNullOrBlank()
         }
     }
+
     override fun afterTextChanged(s: Editable?) {}
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
 }

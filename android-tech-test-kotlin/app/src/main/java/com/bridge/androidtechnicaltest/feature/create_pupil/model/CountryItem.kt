@@ -1,4 +1,4 @@
-package com.bridge.androidtechnicaltest.feature.add_pupil.model
+package com.bridge.androidtechnicaltest.feature.create_pupil.model
 
 val countries = listOf(
     "Nigeria",

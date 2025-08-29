@@ -1,7 +1,6 @@
 package com.bridge.androidtechnicaltest.di
 
 import androidx.room.Room
-import androidx.room.RoomDatabase
 import com.bridge.androidtechnicaltest.data.local.AppDatabase
 import com.bridge.androidtechnicaltest.data.local.DatabaseFactory
 import com.bridge.androidtechnicaltest.data.local.PupilsDao
@@ -9,21 +8,21 @@ import com.bridge.androidtechnicaltest.data.network.PupilApiService
 import com.bridge.androidtechnicaltest.data.network.PupilApiServiceImpl
 import com.bridge.androidtechnicaltest.data.network.PupilServiceFactory
 import com.bridge.androidtechnicaltest.data.network.RetrofitFactory
-import com.bridge.androidtechnicaltest.data.repository.AddPupilRepository
-import com.bridge.androidtechnicaltest.data.repository.AddPupilRepositoryImpl
+import com.bridge.androidtechnicaltest.data.repository.CreatePupilRepository
+import com.bridge.androidtechnicaltest.data.repository.CreatePupilRepositoryImpl
+import com.bridge.androidtechnicaltest.data.repository.DeletePupilRepository
+import com.bridge.androidtechnicaltest.data.repository.DeletePupilRepositoryImpl
 import com.bridge.androidtechnicaltest.data.repository.EditPupilRepository
 import com.bridge.androidtechnicaltest.data.repository.EditPupilRepositoryImpl
 import com.bridge.androidtechnicaltest.data.repository.PupilDetailRepository
 import com.bridge.androidtechnicaltest.data.repository.PupilDetailRepositoryImpl
 import com.bridge.androidtechnicaltest.data.repository.PupilsRepository
 import com.bridge.androidtechnicaltest.data.repository.PupilsRepositoryImpl
-import com.bridge.androidtechnicaltest.feature.add_pupil.AddPupilViewModel
-import com.bridge.androidtechnicaltest.feature.edit_pupil.PupilEditViewModel
+import com.bridge.androidtechnicaltest.feature.create_pupil.ui.AddPupilViewModel
+import com.bridge.androidtechnicaltest.feature.edit_pupil.ui.PupilEditViewModel
 import com.bridge.androidtechnicaltest.feature.pupil.ui.PupilViewModel
-import com.bridge.androidtechnicaltest.feature.pupil_info.PupilDetailViewModel
+import com.bridge.androidtechnicaltest.feature.pupil_details.ui.PupilDetailViewModel
 import org.koin.android.ext.koin.androidContext
-import org.koin.androidx.viewmodel.dsl.viewModel
-import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
 
@@ -56,7 +55,7 @@ val pupilModule = module {
 }
 
 val addPupilModule = module {
-    single<AddPupilRepository> { AddPupilRepositoryImpl(remoteDataSource = get<PupilApiService>(), localDataSource = get<PupilsDao>()) }
+    single<CreatePupilRepository> { CreatePupilRepositoryImpl(remoteDataSource = get<PupilApiService>(), localDataSource = get<PupilsDao>()) }
     viewModelOf(::AddPupilViewModel) bind AddPupilViewModel::class
 }
 val detailPupilModule = module {
@@ -65,6 +64,7 @@ val detailPupilModule = module {
 }
 
 val editPupilModule = module {
+    single<DeletePupilRepository> { DeletePupilRepositoryImpl(remoteDataSource = get<PupilApiService>(), localDataSource = get<PupilsDao>()) }
     single<EditPupilRepository> { EditPupilRepositoryImpl(remoteDataSource = get<PupilApiService>(), localDataSource = get<PupilsDao>()) }
     viewModelOf(::PupilEditViewModel) bind PupilEditViewModel::class
 }

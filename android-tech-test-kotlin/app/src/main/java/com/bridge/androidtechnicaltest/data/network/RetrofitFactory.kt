@@ -1,6 +1,6 @@
 package com.bridge.androidtechnicaltest.data.network
 
-import com.bridge.androidtechnicaltest.core.Constants
+import com.bridge.androidtechnicaltest.core.utils.data.Constants
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

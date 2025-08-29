@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/backgroundColor"
-    tools:context=".feature.edit_pupil.PupilEditFragment">
+    tools:context=".feature.edit_pupil.ui.PupilEditFragment">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/pupil_image"
@@ -79,33 +79,15 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/id_text_field_layout"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:hint="@string/pupil_id"
-        app:layout_constraintEnd_toEndOf="@+id/last_name_text_field_layout"
-        app:layout_constraintStart_toStartOf="@+id/last_name_text_field_layout"
-        app:layout_constraintTop_toBottomOf="@+id/last_name_text_field_layout">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/id_text_field"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:imeOptions="actionNext" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/country_text_field_layout"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:hint="@string/country"
-        app:layout_constraintEnd_toEndOf="@+id/name_text_field_layout"
-        app:layout_constraintStart_toStartOf="@+id/id_text_field_layout"
-        app:layout_constraintTop_toBottomOf="@+id/id_text_field_layout">
+        app:layout_constraintEnd_toEndOf="@+id/last_name_text_field_layout"
+        app:layout_constraintStart_toStartOf="@+id/last_name_text_field_layout"
+        app:layout_constraintTop_toBottomOf="@+id/last_name_text_field_layout">
 
         <com.google.android.material.textfield.MaterialAutoCompleteTextView
             android:id="@+id/country_text_field"

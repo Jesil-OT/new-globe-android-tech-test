@@ -1,7 +1,6 @@
-package com.bridge.androidtechnicaltest.feature.edit_pupil
+package com.bridge.androidtechnicaltest.feature.create_pupil.model
 
-data class EditPupilUI(
-    val pupilId: String = "",
+data class CreatePupilUI(
     val pupilFirstName: String = "",
     val pupilLastName: String = "",
     val pupilLocation: String = "",

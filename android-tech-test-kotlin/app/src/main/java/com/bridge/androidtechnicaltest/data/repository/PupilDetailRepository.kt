@@ -1,99 +1,99 @@
 package com.bridge.androidtechnicaltest.data.repository
 
-import com.bridge.androidtechnicaltest.core.Result
-import com.bridge.androidtechnicaltest.core.utils.ui.asUiText
+import com.bridge.androidtechnicaltest.R
+import com.bridge.androidtechnicaltest.core.Resource
+import com.bridge.androidtechnicaltest.core.utils.data.NetworkError
+import com.bridge.androidtechnicaltest.core.utils.data.NetworkResult
 import com.bridge.androidtechnicaltest.data.local.PupilsDao
-import com.bridge.androidtechnicaltest.data.mapper.toPupilEntity
 import com.bridge.androidtechnicaltest.data.mapper.toPupilDto
-import com.bridge.androidtechnicaltest.data.mapper.toPupilToEntity
+import com.bridge.androidtechnicaltest.data.mapper.toPupilEntity
+import com.bridge.androidtechnicaltest.data.mapper.fromPupilToEntity
 import com.bridge.androidtechnicaltest.data.model.Pupil
 import com.bridge.androidtechnicaltest.data.network.PupilApiService
-import com.bridge.androidtechnicaltest.feature.pupil_info.models.DetailPupilUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+
+typealias DetailsResourceFlow = Flow<Resource<Pupil>>
 
 class PupilDetailRepositoryImpl(
     private val localDataSource: PupilsDao,
     private val remoteDataSource: PupilApiService
-): PupilDetailRepository {
+) : PupilDetailRepository {
 
-    override fun getPupil(pupilId: Int): Flow<DetailPupilUiState> = flow {
-        emit(DetailPupilUiState.Loading)
+    private fun getPupilsFromSingleSource(pupilId: Int): Flow<Pupil> =
+        localDataSource.getPupil(pupilId)
+            .map { localPupil ->
+                localPupil.toPupilEntity()
+            }.distinctUntilChanged()
+            .flowOn(Dispatchers.IO)
+
+    override fun getPupil(pupilId: Int): DetailsResourceFlow = flow {
+        // get from cached first
+        val cachedPupil = localDataSource.getPupil(pupilId).filterNotNull().first()
+//        emit(DetailPupilResponse.InitialData(pupil = cachedPupil.toPupilEntity()))
+        emit(Resource.Success(data = cachedPupil.toPupilEntity()))
+
         // fetch data from network
-        when(val pupil = remoteDataSource.getPupil(pupilId)){
-            is Result.Success -> {
+        emit(Resource.Loading)
+        when (val pupil = remoteDataSource.getPupil(pupilId)) {
+            is NetworkResult.Success -> {
                 //save to database
                 val remotePupil = pupil.data
                 // delete from local database to avoid duplication or data inconsistencies
-                localDataSource.deletePupil(pupilId)
-                savePupilsToLocal(remotePupil.toPupilDto())
-
-                val localPupil = localDataSource.getPupil(pupilId)
-                val pupil = localPupil.map { pupil ->
-                    DetailPupilUiState.Success(
-                        pupils = pupil.toPupilEntity(),
-                        isStale = true
-                    )
-                }.distinctUntilChanged()
-                emitAll(pupil)
-            }
-            is Result.Error -> {
-                val error = pupil.error.asUiText()
-                emit(DetailPupilUiState.Error(message = error))
-                val localPupil = localDataSource.getPupil(pupilId)
-                val pupil = localPupil.map {
-                    DetailPupilUiState.Success(
-                        pupils = it.toPupilEntity(),
-                        isStale = false
-                    )
-                }.distinctUntilChanged()
-                emitAll(pupil)
-            }
-        }
-    }
-
-    override fun deletePupil(pupilId: Int): Flow<DetailPupilUiState> = flow {
-        emit(DetailPupilUiState.Loading)
-
-        //delete from network first
-        when(val pupil = remoteDataSource.deletePupil(pupilId)){
-            is Result.Success -> {
-                //delete from database
-                localDataSource.deletePupil(pupilId)
+                savePupilToLocal(remotePupil.toPupilDto())
+                // emit the new data
                 emit(
-                    DetailPupilUiState.Success(
-                        pupils = null,
-                        isStale = null
+                    Resource.Success(
+                        data = getPupilsFromSingleSource(pupilId).first(),
                     )
                 )
             }
-            is Result.Error -> {
-                val error = pupil.error.asUiText()
-                emit(DetailPupilUiState.Error(message = error))
+
+            is NetworkResult.Error -> {
+                when (pupil.error) {
+                    is NetworkError.NoInternetConnection -> emit(Resource.Error(R.string.no_internet_error_pupil_detail))
+                    is NetworkError.ServerError -> emit(Resource.Error(R.string.swipe_server_error))
+                    is NetworkError.NotFound -> {
+                        localDataSource.deletePupil(pupilId)
+                        emit(Resource.NotFoundData(R.string.not_found_details))
+                    }
+                    is NetworkError.ServiceUnavailable -> emit(Resource.Error(R.string.swipe_service_unavailable))
+                    is NetworkError.ConnectionTimedOut -> emit(Resource.Error(R.string.swipe_connection_timed_out))
+                    is NetworkError.BadRequest -> emit(Resource.Error(R.string.bad_request))
+                    is NetworkError.ApiError -> emit(Resource.Error(R.string.api_error))
+                    is NetworkError.UnknownError -> emit(Resource.Error(R.string.unknown_error))
+                }
             }
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
-    private suspend fun savePupilsToLocal(pupils: Pupil){
-        withContext(Dispatchers.IO){
-//            localDataSource.insertPupils(pupils.toPupilToEntity())
+    /** approach based facts
+     * The primary key must remain stable.
+     *
+     * Since the endpoint changes any of the pupil's properties
+     * including pupil id we use this approach to update the pupil
+     *
+     * why? If the endpoint changes the ID, Room considers it a new row..
+     * so that leads to data inconsistencies.
+     * */
+    private suspend fun savePupilToLocal(pupils: Pupil) {
+        withContext(Dispatchers.IO) {
+            localDataSource.deletePupil(pupils.id)
+            localDataSource.insertPupil(pupils.fromPupilToEntity())
         }
     }
 }
 
-interface PupilDetailRepository{
-    /**
-     * get a single pupil from remote and
-     * save in local to display
-     * when no network or no internet or server error
-     * show the on from local*/
-    fun getPupil(pupilId: Int): Flow<DetailPupilUiState>
+interface PupilDetailRepository {
 
-    fun deletePupil(pupilId: Int): Flow<DetailPupilUiState>
+    fun getPupil(pupilId: Int): DetailsResourceFlow
+
 }
 

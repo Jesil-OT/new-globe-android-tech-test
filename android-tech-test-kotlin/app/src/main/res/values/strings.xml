@@ -20,8 +20,44 @@
     <string name="cancel">Cancel</string>
     <string name="last_name">Last name</string>
     <string name="new_pupil_created">You created %1$s as a new pupil, nice 👍!</string>
-    <string name="pupil_updated">Your pupil has been updated successfully, nice 👍</string>
+    <string name="pupil_updated">Your pupil has been updated Nice 👍</string>
     <string name="pupil_list_updated">Your pupil list has been successfully updated. You\'re now seeing the latest information.</string>
     <string name="retry">Retry</string>
     <string name="no_pupil_list_found">No pupils, unable to fetch data from sever</string>
+    <string name="this_pupil_has_been_deleted_or_does_not_exist">This pupil has been deleted or does not exist</string>
+    <string name="pupil_detail_updated">This pupil information is up to date 👍</string>
+    <string name="no_pupil_found">No pupil found, please swipe down to refresh</string>
+    <string name="pupil_deleted_successfully">Pupil deleted successfully</string>
+    <string name="delete_pupil">Delete Pupil?</string>
+    <string name="delete_dialog_message">Are you sure you want to delete this pupil?</string>
+    <string name="yes">Yes</string>
+
+    <string name="no_internet_error_pupil_list">No internet connection while trying to fetch pupils 💩. Please check your internet connection and try again</string>"
+    <string name="swipe_server_error">server-side network issue, swipe up to refresh or try again later</string>
+    <string name="main_screen_no_pupil_found">no pupil data found in our database!</string>
+    <string name="swipe_service_unavailable">Service Unavailable, swipe up to refresh or try again later</string>
+    <string name="swipe_connection_timed_out">The server took too long to respond. swipe up to refresh Please check your network and try again.</string>
+    <string name="bad_request">Bad Request from server 💩</string>
+    <string name="api_error">Api error!!</string>
+    <string name="unknown_error">Unknown Error</string>
+    <string name="no_internet_error_pupil_detail">No internet connection while trying to fetch this pupil 💩. Please check your internet connection and try again</string>
+    <string name="not_found_details">This pupil no longer exist in our database!</string>
+    <string name="no_internet_error_delete_pupil">No internet connection while trying to delete this pupil 💩. Please check your internet connection and try again</string>
+    <string name="not_found_delete_pupil">you cannot delete a pupil that doesn\'t exist</string>
+    <string name="server_error_delete_pupil">server-side network issue while deleting pupil, please try again later</string>
+    <string name="service_error">Service Unavailable, while deleting pupil try again later</string>
+    <string name="bad_request_delete_pupil">Bad Request from server while deleting pupil 💩</string>
+    <string name="no_internet_create_pupil">A network error occurred while trying to create pupil 💩. Please check your internet connection and try again</string>
+    <string name="server_error_create_pupil">server-side network issue while creating pupil, please try again later</string>
+    <string name="service_error_create_pupil">Service Unavailable, while creating pupil try again later</string>
+    <string name="bad_request_create_pupil">Bad Request from server while creating pupil 💩, please check fields to input right information</string>
+    <string name="connection_time_out_create">The server took too long to respond. Please check your network and try again.</string>
+    <string name="nothing_happens">Nothing happened!!!!!</string>
+    <string name="no_internet_update_pupil">A network error occurred while trying to update pupil 💩. Please check your internet connection and try again</string>
+    <string name="server_error_update_pupil">server-side network issue while updating pupil, please try again later</string>
+    <string name="service_error_update_pupil">Service Unavailable, please try again later to save your edited changes</string>
+    <string name="connection_time_out_update">The server took too long to respond. Please check your network and try again to save your edited changes.</string>
+    <string name="bad_request_update_pupil">Bad Request from server, please check fields to input right information 💩</string>
+    <string name="not_found_update_pupil">This Pupil you are trying to edit/update does not exist, must have been deleted from the server</string>
+
 </resources>

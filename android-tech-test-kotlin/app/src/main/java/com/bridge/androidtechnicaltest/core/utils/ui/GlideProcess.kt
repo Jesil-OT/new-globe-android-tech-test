@@ -1,6 +1,5 @@
 package com.bridge.androidtechnicaltest.core.utils.ui
 
-import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.ImageView
 import com.bridge.androidtechnicaltest.R

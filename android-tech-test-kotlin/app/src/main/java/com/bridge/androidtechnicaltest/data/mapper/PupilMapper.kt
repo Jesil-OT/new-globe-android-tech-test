@@ -5,7 +5,7 @@ import com.bridge.androidtechnicaltest.data.model.Pupil
 import com.bridge.androidtechnicaltest.data.network.model.AddPupilsDto
 import com.bridge.androidtechnicaltest.data.network.model.PupilsDto
 
-fun Pupil.toPupilToEntity(): PupilsEntity {
+fun Pupil.fromPupilToEntity(): PupilsEntity {
     return PupilsEntity(
         pupilId = id,
         name = "$firstName $lastName",
@@ -51,7 +51,7 @@ fun PupilsDto.toPupilDto(): Pupil {
     )
 }
 
-fun Pupil.toPupilToAddPupilDto(): AddPupilsDto{
+fun Pupil.toCreateDto(): AddPupilsDto{
     return AddPupilsDto(
         pupilName = "$firstName $lastName",
         pupilCountry = country,
