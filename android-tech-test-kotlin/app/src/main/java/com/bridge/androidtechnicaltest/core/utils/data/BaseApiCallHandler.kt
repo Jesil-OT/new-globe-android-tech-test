@@ -1,9 +1,5 @@
-@file:Suppress("UNCHECKED_CAST")
-
 package com.bridge.androidtechnicaltest.core.utils.data
 
-import com.bridge.androidtechnicaltest.data.sources.network.model.ErrorResponse
-import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Response
@@ -11,7 +7,7 @@ import java.io.IOException
 import java.net.SocketTimeoutException
 import kotlin.coroutines.cancellation.CancellationException
 
-suspend inline fun <T> safeApiCall(crossinline apiCall: suspend () -> Response<T>): NetworkResult<T, NetworkError> {
+suspend inline fun <reified T> safeApiCall(crossinline apiCall: suspend () -> Response<T>): NetworkResult<T, NetworkError> {
     return withContext(Dispatchers.IO) {
         try {
             val response: Response<T> = apiCall()
@@ -20,32 +16,43 @@ suspend inline fun <T> safeApiCall(crossinline apiCall: suspend () -> Response<T
                     response.body()?.let { body ->
                         NetworkResult.Success(data = body)
                     } ?: run {
-                        NetworkResult.Success(data = Unit as? T?: run {
-                            throw Exception("Response body is null")
-                        })
+                        // Handle the case where the response body is null
+                        when {
+                            response.code() == 204 -> {
+                                // if type is Unit meaning the response has no body so it's successful
+                                // else it fails
+                                if (T::class == Unit::class) {
+                                    NetworkResult.Success(Unit as T)
+                                } else {
+                                    NetworkResult.Error(NetworkError.ApiError)
+                                }
+                            }
+
+                            else -> {
+                                NetworkResult.Error(NetworkError.ApiError)
+                            }
+                        }
                     }
                 }
+
                 404 -> {
                     NetworkResult.Error(error = NetworkError.NotFound)
                 }
+
                 400 -> {
                     NetworkResult.Error(error = NetworkError.BadRequest)
                 }
+
                 in 500 until 600 -> {
                     NetworkResult.Error(error = NetworkError.ServiceUnavailable)
                 }
+
                 else -> {
-                    val errorResponse = response.errorBody()?.string()
-                    val gson = Gson()
-                    val parsedError = errorResponse?.let {
-                        gson.fromJson(it, ErrorResponse::class.java)
-                    }
-                    NetworkResult.Error(error = NetworkError.ApiError(parsedError?.errorTitle))
+                    NetworkResult.Error(error = NetworkError.ApiError)
                 }
             }
 
-        }
-        catch (e: SocketTimeoutException) {
+        } catch (e: SocketTimeoutException) {
             e.printStackTrace()
             NetworkResult.Error(error = NetworkError.ConnectionTimedOut)
         } catch (e: IOException) {
@@ -61,18 +68,18 @@ suspend inline fun <T> safeApiCall(crossinline apiCall: suspend () -> Response<T
 }
 
 sealed interface NetworkError {
-    data class ApiError(val message: String?) : NetworkError
+    object ApiError : NetworkError
     object UnknownError : NetworkError
     object ServerError : NetworkError
     object NotFound : NetworkError
     object BadRequest : NetworkError
     object NoInternetConnection : NetworkError
     object ConnectionTimedOut : NetworkError
-    object ServiceUnavailable: NetworkError
+    object ServiceUnavailable : NetworkError
 }
 
 sealed interface NetworkResult<out D, out E : NetworkError> {
     data class Success<out D>(val data: D) : NetworkResult<D, Nothing>
-    data class Error<out E : NetworkError>(val error: E, val errorCode: Int? = null) :
+    data class Error<out E : NetworkError>(val error: E) :
         NetworkResult<Nothing, E>
 }

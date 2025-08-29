@@ -128,8 +128,6 @@ class PupilDetailFragment : Fragment(R.layout.fragment_pupildetail) {
                                     getString(R.string.pupil_deleted_successfully),
                                     Toast.LENGTH_SHORT
                                 ).show()
-                                delay(500) // Short delay for UI to update
-                                findNavController().popBackStack()
                             }
 
                             is DeleteOneTimeEvent.DeleteErrorEvent -> handleDeleteErrorEvent(
@@ -163,18 +161,11 @@ class PupilDetailFragment : Fragment(R.layout.fragment_pupildetail) {
         errorMessage: Int
     ) {
         hideLoading()
-        Snackbar.make(
-            binding.root,
-            errorMessage,
-            Snackbar.LENGTH_LONG
-        ).show()
-        updateViews(
-            DetailPupilUI(
-                pupilId = "No pupil ID found",
-                pupilName = "No pupil name found",
-                pupilCountry = "No pupil country found",
-            )
-        )
+//        Snackbar.make(
+//            binding.root,
+//            errorMessage,
+//            Snackbar.LENGTH_LONG
+//        ).show()
     }
 
     private fun handleLoadingEvent() = with(binding) {

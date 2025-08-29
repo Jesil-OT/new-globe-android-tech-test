@@ -108,12 +108,12 @@ class PupilDetailViewModel(
                 is Resource.Error -> {
                     _deleteEventState.emit(DeleteOneTimeEvent.DeleteErrorEvent(uiState.message))
                     Timber.tag(DETAIL_VIEWMODEL).d("delete state error:")
-                    isPupilFound.value = true
+                    isPupilFound.value = false
                 }
 
                 is Resource.NotFoundData -> {
                     _deleteEventState.emit(DeleteOneTimeEvent.NotFoundEvent(uiState.message))
-                    isPupilFound.value = true
+                    isPupilFound.value = false
                 }
             }
         }
