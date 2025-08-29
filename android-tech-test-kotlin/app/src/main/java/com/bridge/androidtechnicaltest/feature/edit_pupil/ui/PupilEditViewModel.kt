@@ -67,8 +67,8 @@ class PupilEditViewModel(
             pupilLocation = pupilCountry,
             pupilImage = RandGenerator.pupilPhoto(getImageType(), pupilFirstname, pupilLastName),
             pupilCountry = pupilCountry,
-            latitude = RandGenerator.randomLatitude().toString(),
-            longitude = RandGenerator.randomLongitude().toString()
+            latitude = RandGenerator.randomLatitude().toString().take(7),
+            longitude = RandGenerator.randomLongitude().toString().take(7)
         ).toPupil()
         viewModelScope.launch {
             repository.editPupil(pupilId.toInt(), editPupil).collect { response ->

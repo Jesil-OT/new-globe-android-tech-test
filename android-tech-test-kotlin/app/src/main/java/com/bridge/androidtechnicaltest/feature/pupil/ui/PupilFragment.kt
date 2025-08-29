@@ -88,7 +88,7 @@ class PupilFragment : Fragment(R.layout.fragment_pupillist), PupilAction {
                 launch {
                     viewModel.handleEventState.collect { viewEvent ->
                         when (viewEvent) {
-                            is PupilOneTimeEvent.ErrorEvent -> handleErrorEvent(event = viewEvent)
+                            is PupilOneTimeEvent.ErrorEvent -> handleErrorEvent(viewEvent.errorMessage)
 
                             is PupilOneTimeEvent.LoadingEvent -> handleLoadingEvent()
 
@@ -102,9 +102,9 @@ class PupilFragment : Fragment(R.layout.fragment_pupillist), PupilAction {
         }
     }
 
-    private fun handleErrorEvent(event: PupilOneTimeEvent.ErrorEvent) {
+    private fun handleErrorEvent(eventMessage: Int) {
         hideLoading()
-        Snackbar.make(binding.root, event.errorMessage, Snackbar.LENGTH_LONG).show()
+        Snackbar.make(binding.root, eventMessage, Snackbar.LENGTH_LONG).show()
     }
 
     private fun handleLoadingEvent() = with(binding) {
@@ -112,6 +112,7 @@ class PupilFragment : Fragment(R.layout.fragment_pupillist), PupilAction {
     }
 
     private fun showNotFoundMessage() = with(binding) {
+        hideLoading()
         pupilList.visibility = View.GONE
         notFoundError.visibility = View.VISIBLE
     }

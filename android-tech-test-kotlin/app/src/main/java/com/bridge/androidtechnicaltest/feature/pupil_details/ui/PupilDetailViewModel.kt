@@ -61,6 +61,7 @@ class PupilDetailViewModel(
 
                 is Resource.NotFoundData -> {
                     _handleEventState.emit(PupilDetailOneTimeEvent.NotFoundEvent(uiState.message))
+                    _pupilDetails.value = DetailPupilUI()
                     isPupilFound.value = false
                 }
 
@@ -83,8 +84,8 @@ class PupilDetailViewModel(
 
                 is Resource.Success -> {
                     Log.d("PupilDetailsViewModel", "delete state success:")
-                    _deleteEventState.emit(DeleteOneTimeEvent.SuccessEvent)
                     isPupilFound.value = false
+                    _deleteEventState.emit(DeleteOneTimeEvent.SuccessEvent)
                 }
 
                 is Resource.Error -> {
@@ -94,7 +95,8 @@ class PupilDetailViewModel(
                 }
 
                 is Resource.NotFoundData -> {
-                    // code will never be reached if the pupil has been deleted
+                    _deleteEventState.emit(DeleteOneTimeEvent.NotFoundEvent(uiState.message))
+                    isPupilFound.value = true
                 }
             }
         }
@@ -110,6 +112,7 @@ sealed interface PupilDetailOneTimeEvent {
 
 sealed interface DeleteOneTimeEvent{
     data class DeleteErrorEvent(val errorMessage: Int) : DeleteOneTimeEvent
+    data class NotFoundEvent(val errorMessage: Int) : DeleteOneTimeEvent
     object LoadingEvent : DeleteOneTimeEvent
     object SuccessEvent : DeleteOneTimeEvent
 }

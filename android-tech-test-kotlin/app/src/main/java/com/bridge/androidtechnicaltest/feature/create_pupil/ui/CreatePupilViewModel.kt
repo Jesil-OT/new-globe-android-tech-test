@@ -30,8 +30,8 @@ class AddPupilViewModel(
             pupilLastName = pupilLastName,
             pupilCountry = pupilCountry,
             pupilImage = RandGenerator.pupilPhoto(getImageType(), pupilFirstName, pupilLastName),
-            latitude = RandGenerator.randomLatitude().toString().take(5),
-            longitude = RandGenerator.randomLongitude().toString().take(5)
+            latitude = RandGenerator.randomLatitude().toString().take(7),
+            longitude = RandGenerator.randomLongitude().toString().take(7)
         ).toPupil()
         viewModelScope.launch {
             createPupilRepository.createPupil(pupil = newPupil).collect { response ->

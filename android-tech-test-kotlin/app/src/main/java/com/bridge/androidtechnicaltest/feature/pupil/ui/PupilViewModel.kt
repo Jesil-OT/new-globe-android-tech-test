@@ -43,8 +43,8 @@ class PupilViewModel(
                         emptyListEvent.emit(true)
                     } else {
                         _pupilsData.value = currentPupilList
+                        _handleEventState.emit(PupilOneTimeEvent.SuccessEvent)
                     }
-                    _handleEventState.emit(PupilOneTimeEvent.SuccessEvent)
                 }
 
                 is Resource.Loading -> {
@@ -78,6 +78,5 @@ fun Pupil.toPupilUI(): PupilUI {
         pupilLocation = "$longitude, $latitude",
         pupilCountry = country,
         pupilImage = image
-
     )
 }

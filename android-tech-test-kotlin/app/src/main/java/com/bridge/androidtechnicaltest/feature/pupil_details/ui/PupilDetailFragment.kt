@@ -21,6 +21,7 @@ import com.bridge.androidtechnicaltest.core.utils.ui.provideGlide
 import com.bridge.androidtechnicaltest.databinding.FragmentPupildetailBinding
 import com.bridge.androidtechnicaltest.feature.pupil_details.models.DetailPupilUI
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -116,13 +117,16 @@ class PupilDetailFragment : Fragment(R.layout.fragment_pupildetail) {
                             is DeleteOneTimeEvent.LoadingEvent -> handleLoadingEvent()
 
                             is DeleteOneTimeEvent.SuccessEvent -> {
+                                viewModel.observerPupilChanges(args.pupilId)
                                 Toast.makeText(requireContext(),
                                     getString(R.string.pupil_deleted_successfully), Toast.LENGTH_SHORT).show()
+                                delay(500) // Short delay for UI to update
                                 findNavController().popBackStack()
                             }
 
                             is DeleteOneTimeEvent.DeleteErrorEvent -> handleDeleteErrorEvent(deleteEvent.errorMessage)
 
+                            is DeleteOneTimeEvent.NotFoundEvent -> showNotFoundMessage()
                         }
                     }
                 }

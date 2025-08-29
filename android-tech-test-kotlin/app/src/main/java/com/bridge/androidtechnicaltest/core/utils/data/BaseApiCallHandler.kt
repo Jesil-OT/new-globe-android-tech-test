@@ -16,11 +16,13 @@ suspend inline fun <T> safeApiCall(crossinline apiCall: suspend () -> Response<T
         try {
             val response: Response<T> = apiCall()
             when (response.code()) {
-                in 200 until 205 -> {
+                in 200 until 299 -> {
                     response.body()?.let { body ->
                         NetworkResult.Success(data = body)
                     } ?: run {
-                        NetworkResult.Success(data = Unit as T)
+                        NetworkResult.Success(data = Unit as? T?: run {
+                            throw Exception("Response body is null")
+                        })
                     }
                 }
                 404 -> {
@@ -29,7 +31,7 @@ suspend inline fun <T> safeApiCall(crossinline apiCall: suspend () -> Response<T
                 400 -> {
                     NetworkResult.Error(error = NetworkError.BadRequest)
                 }
-                in 500..600 -> {
+                in 500 until 600 -> {
                     NetworkResult.Error(error = NetworkError.ServiceUnavailable)
                 }
                 else -> {
