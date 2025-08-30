@@ -25,10 +25,10 @@ ___________________
 
 ## Assumptions Made
 ### To implement the Requirements for the project, I made these assumptions:
-- **Users always want to see the most recent updated cached data, even if the network fails.**
-- **The Api constantly throws Exceptions like NotFound Exceptions, BadRequest Exceptions, Server Unavailable Exceptions.**
-- **Network connectivity is unreliable, so offline-first design is critical.**
-- **Project uses view based System or XML View System**
+- Users always want to see the most recent updated cached data, even if the network fails.
+- The Api constantly throws Exceptions like NotFound Exceptions, BadRequest Exceptions, Server Unavailable Exceptions.
+- Network connectivity is unreliable, so offline-first design is critical.
+- Project uses view based System or XML View System.
 
 ## Requirements Implemented
 - **Single Source of Truth:** All pupil data is stored locally in a Room database. Whether online or offline, the UI always reads from RoomDB. **_List of Pupils:_** A PupilDao provides a `getAllPupils()` query that returns a flow of pupils from the database. **_Pupil Details:_** A `getPupil(pupilId)` query fetches detailed info from Room. **_Add New Pupil:_** A new record is inserted into Room via `insertPupil(pupil)` if online only. **_Delete Pupil:_** If online-> A record of pupil is removed from Room using `deletePupil(pupilId)` to avoid data inconsistencies. **_Delete all Pupils_** If online-> All records are removed from Room and re-inserted into the database for updated data using the `insertPupils(pupils)` query. **_Offline Support:_** When the network is unavailable, Room continues to serve cached pupil data. This ensures the user can still: _View the list of pupils_ and _View pupil details_. **_Sync on Reconnect:_** When the app detects connectivity again, it changes in Room and is synced with the remote server.
