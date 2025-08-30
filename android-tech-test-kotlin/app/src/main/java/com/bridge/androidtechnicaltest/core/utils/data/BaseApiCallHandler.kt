@@ -17,22 +17,9 @@ suspend inline fun <reified T> safeApiCall(crossinline apiCall: suspend () -> Re
                         NetworkResult.Success(data = body)
                     } ?: run {
                         // Handle the case where the response body is null
-                        when {
-                            response.code() == 204 -> {
-                                // if type is Unit meaning the response has no body so it's successful
-                                // else it fails
-                                if (T::class == Unit::class) {
-                                    NetworkResult.Success(Unit as T)
-                                } else {
-                                    NetworkResult.Error(NetworkError.ApiError)
-                                }
-                            }
-
-                            else -> {
-                                NetworkResult.Error(NetworkError.ApiError)
-                            }
-                        }
+                        NetworkResult.Success(Unit as T)
                     }
+
                 }
 
                 404 -> {
