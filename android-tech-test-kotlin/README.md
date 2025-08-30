@@ -1,52 +1,37 @@
-![Bridge International Academies Logo](BannerLogo280x60.png)
+## New Globe Android Tech Test
+______________________________
 
-# Android Technical Test
+### This is a application designed to administer pupil information from a mobile application, it involves users or business owner to See/Monitor every pupil in a school, the application has features like Creating pupil, Delete Pupil, Edit Pupil, and shows all the list of pupils in the app.
 
-## Objective
+## Tools & Technologies 🛠️
+- Kotlin
+- Koin - Dependency Injection
+- Retrofit - Network Layer
+- Logging interceptor - Network Layer
+- Room - Database Layer
+- Glide - Image Loading Library
+- CircleImageView - Image Loading Library
+- SwipeRefreshLayout - Pull to Refresh
+- Timber - Logging Library
+- Kotlin Serialization - Serialization Library
+- Flow: StateFlow, SharedFlow
 
-Below are a set of requirements from a business owner within Bridge International Academies, relating to a need to be able to administer pupil information from a mobile application.  The basic framework of the application already exists, but needs to be extended with the some or all of the given requirements.
+## Code design and Architecture 🦾🛠️
+___________________
+- This Project is made using MVVM Architecture.
+- The core layer holds `Utility` and `Helper Classes` with the `Dependency Injection Module`
+- The data layer holds the `Mapper` class for mapping between the different layers of the app ie (data -> domain -> presentation), holds the general `Model`, the `Repository` that holds the different Abstractions and acts as the source of the single source of truth, then lastly the `Sources`, This layer is made up of two layers - `Network`(or `Remote`) and `Local`, the - The `Local layer` is the single source of truth of the UI. The data is gotten from the endpoint and then cached to the room database. The `Network layer` is the source that deals with managing tasks such as making API calls, sending and receiving data (e.g., JSON).
+- The feature layer holds related information concerning the `features` of the app. eg (the create pupil feature) (the edit pupil feature) (the pupil list feature) etc.
 
-We assess a number of things including the design of your solution and your programming skills. While these are small problems, we expect you to submit what you believe is production-quality code – code that you’d be able to run, maintain, and evolve, including any tests that you would normally write as part of the development process. You don’t need to gold plate your solution; you do not have to complete all requirements; please submit when you are happy that you have demonstrated your ability to deliver within the alloted time frame.
+## Assumptions Made
+### To implement the Requirements for the project, I made these assumptions:
+- **Users always want to see the most recent updated cached data, even if the network fails.**
+- **The Api constantly throws Exceptions like NotFound Exceptions, BadRequest Exceptions, Server Unavailable Exceptions.**
+- **Network connectivity is unreliable, so offline-first design is critical.**
+- **Project uses view based System or XML View System**
 
-As a general rule, we allow three days from the date that you receive these instructions to submit your code, but you may request more time if needed. It is not required that all requirements are completed within this time period.  Please submit the exercise when you are happy with that you have demonstrated 
-
-If you have any questions about the code as it relates to your interview process, please contact us.
-
-
-## Technical Test API
-
-The Technical Test API is a RESTful web service that makes uses of basic HTTP GET, POST, PUT and DELETE calls. The API documentation can be accessed [here](https://androidtechnicaltestapi-test.bridgeinternationalacademies.com/swagger/index.html).
-
-![Technical Test API](TechnicalTestAPI.png)
-
-### Swagger
-
-Upon visiting the API documentation page, you will see the following page where you can see a short description of the API, followed by the resources it provides and a list of all the actions that can be performed on them. You can also try out the API directly from the web browser. The API exposes a standard [Swagger](http://swagger.io/) endpoint.
-
-### Real World Simulation
-
-The API attempts to simulate real world usage in several ways:
-
-1. Occasionally real web services go down due to any number of reasons. The Technical Test API will occasionally throw errors. Your app will need to deal with this.
-2. To simulate bad network connectivity or the server being under intense load, the Technical Test API will sometimes take a few seconds to respond.
-3. To simulate other users creating, updating and deleting data the Technical Test API will sometimes create, update or delete pupils from its internal database.
-
-### Validation
-
-Pupils have several fields, including Name, Country, Image, Latitude and Longitude. To insert or update a pupil, these fields values must be valid for the Technical Test API to accept them. If they are invalid the API will return a standard 400 Bad Request error response.
-
-## App Requirements
-
-The requirements from the business owner are:
-
-1. I need to be able to see a list of all pupils.
-2. I need to be able to add a new pupil and submit.
-3. The above requirements should continue when I am offline.  With data synchronising when I'm next online.
-
-In addition, you should also:
-
-1. Write a short ReadMe about your code, your design, assumptions made and which requirements are implemented.
-2. Write production quality code.
-3. Submit your source code as a .zip file. Also, do not include any binary files in your final solution.
-
-## Good Luck!
+## Requirements Implemented
+- **Single Source of Truth:** All pupil data is stored locally in a Room database. Whether online or offline, the UI always reads from RoomDB. **_List of Pupils:_** A PupilDao provides a `getAllPupils()` query that returns a flow of pupils from the database. **_Pupil Details:_** A `getPupil(pupilId)` query fetches detailed info from Room. **_Add New Pupil:_** A new record is inserted into Room via `insertPupil(pupil)` if online only. **_Delete Pupil:_** If online-> A record of pupil is removed from Room using `deletePupil(pupilId)` to avoid data inconsistencies. **_Delete all Pupils_** If online-> All records are removed from Room and re-inserted into the database for updated data using the `insertPupils(pupils)` query. **_Offline Support:_** When the network is unavailable, Room continues to serve cached pupil data. This ensures the user can still: _View the list of pupils_ and _View pupil details_. **_Sync on Reconnect:_** When the app detects connectivity again, it changes in Room and is synced with the remote server.
+- **The API often throws errors like NotFound (404), BadRequest (400), or Server Unavailable (5xx):** To avoid crashing the app and to give the user a stable experience, I wrapped all API calls inside a safeApiCall helper function. **This function:** Runs the API request on Dispatchers.IO so it doesn’t block the UI. **_Checks the response code:_** `200–299` → success, `return data`. `404` → return a `NetworkError.NotFound`. `400` → return a `NetworkError.BadRequest`. `500-600` → return a `NetworkError.ServiceUnavailable`. Anything else → return a generic `ApiError`. **_Catches network exceptions like:_** `SocketTimeoutException` → maps to `ConnectionTimedOut`. `IOException (no internet)` → maps to `NoInternetConnection`. Any other unexpected error → `UnknownError`. Finally, every call returns a `NetworkResult`, which can either be: `Success(data or Unit)` if the API worked, or `Error(errorType)` if something went wrong. This way, instead of the app crashing or showing raw exceptions, the UI always gets a safe, predictable result and can display the right message.
+- **Offline-first design:** Since network connectivity is unreliable, I designed the app to be offline-first. This means the UI never waits for the network to succeed before showing data. Instead, the Room database acts as the **_single source of truth_** while loading or trying to get new data. Whenever the app fetches pupils, it first returns cached data from Room so the list/details show instantly, even without internet Once the device comes back online, it's sync process runs to get local changes with the server. If the API call fails due to errors like _NotFound_, _BadRequest_, or _Server Unavailable_, the cached copy from Room is still displayed.
+- **The project is built using the XML View System instead of Jetpack Compose:** To manage UI state and one-time events in a lifecycle-aware way, I used **StateFlow** and **SharedFlow** from Kotlin Coroutines: **StateFlow** was used to expose continuous UI state (like the list of pupils, pupils details). Whenever the data in Room or the network changes, the UI automatically reacts to the new state. **SharedFlow** was used for **one-time events** such as showing error messages, navigation triggers, toast messages or other UI actions. This prevents issues like the same error being shown again after configuration changes (e.g., screen rotation).

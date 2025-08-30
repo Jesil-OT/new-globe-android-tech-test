@@ -1,4 +1,4 @@
-package com.bridge.androidtechnicaltest.di
+package com.bridge.androidtechnicaltest.core.di
 
 import androidx.room.Room
 import com.bridge.androidtechnicaltest.data.sources.local.AppDatabase
