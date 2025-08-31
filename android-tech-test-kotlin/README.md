@@ -1,7 +1,5 @@
 ## New Globe Android Tech Test
-______________________________
-
-### This is a application designed to administer pupil information from a mobile application, it involves users or business owner to See/Monitor every pupil in a school, the application has features like Creating pupil, Delete Pupil, Edit Pupil, and shows all the list of pupils in the app.
+This is a application designed to administer pupil information from a mobile application, it involves users or business owner to See/Monitor every pupil in a school, the application has features like Creating pupil, Delete Pupil, Edit Pupil, and shows all the list of pupils in the app.
 
 ## Tools & Technologies 🛠️
 - Kotlin
@@ -20,7 +18,7 @@ ______________________________
 ___________________
 - This Project is made using MVVM Architecture.
 - The core layer holds `Utility` and `Helper Classes` with the `Dependency Injection Module`
-- The data layer holds the `Mapper` class for mapping between the different layers of the app ie (data -> domain -> presentation), holds the general `Model`, the `Repository` that holds the different Abstractions and acts as the source of the single source of truth, then lastly the `Sources`, This layer is made up of two layers - `Network`(or `Remote`) and `Local`, the - The `Local layer` is the single source of truth of the UI. The data is gotten from the endpoint and then cached to the room database. The `Network layer` is the source that deals with managing tasks such as making API calls, sending and receiving data (e.g., JSON).
+- The data layer holds the `Mapper` class for mapping between the different layers of the app ie (data → domain → presentation), holds the general `Model`, the `Repository` that holds the different Abstractions and acts as the source of the single source of truth, then lastly the `Sources`, This layer is made up of two layers - `Network`(or `Remote`) and `Local`, the - The `Local layer` is the single source of truth of the UI. The data is gotten from the endpoint and then cached to the room database. The `Network layer` is the source that deals with managing tasks such as making API calls, sending and receiving data (e.g., JSON).
 - The feature layer holds related information concerning the `features` of the app. eg (the create pupil feature) (the edit pupil feature) (the pupil list feature) etc.
 
 ## Assumptions Made
